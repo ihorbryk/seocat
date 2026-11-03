@@ -13,8 +13,20 @@ A single fact about the Page, such as the length of its meta title or its number
 _Avoid_: Indicator, parameter, field, stat
 
 **Group**:
-A named set of Metrics shown together on its own tab of the popup. There are two Groups: **Content** (what the Page says, such as its meta title and description) and **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang).
+A named set of Metrics shown together on its own tab of the popup. There are three Groups: **Content** (what the Page says, such as its meta title and description), **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang) and **Images** (every Image on the Page with its alt text, address, pixel dimensions and file size).
 _Avoid_: Section, category, data block
+
+**Image**:
+One `<img>` element of the Page, listed in document order; the same file used twice is two Images. Inline SVG, CSS backgrounds and favicons are not Images.
+_Avoid_: Picture, photo, asset
+
+**Not loaded**:
+The state of an Image whose file the browser has not loaded, such as a lazy image below the fold or a broken one, so its pixel dimensions and file size are unknown.
+_Avoid_: Broken, pending, missing (when the tag exists)
+
+**Size unknown**:
+The state of a loaded Image whose file size the browser does not reveal to seocat, typically a file from another origin.
+_Avoid_: Unknown, n/a
 
 **Missing**:
 The state of a Metric whose source tag is absent from the Page.

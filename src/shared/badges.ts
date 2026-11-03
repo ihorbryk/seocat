@@ -8,3 +8,10 @@ export const EMPTY: BadgeView = { text: 'Empty', tone: 'warn' };
 export function duplicate(count: number): BadgeView {
   return { text: `Duplicate ×${count}`, tone: 'warn' };
 }
+
+/** Empty alt: `alt=""` — правильна розмітка декоративного Image, тож без попередження. */
+export const EMPTY_ALT: BadgeView = { ...EMPTY, tone: 'neutral' };
+
+/** Стани Image з `GLOSSARY.md`: інформація, а не проблема, тому без попередження. */
+export const NOT_LOADED: BadgeView = { text: 'Not loaded', tone: 'neutral' };
+export const SIZE_UNKNOWN: BadgeView = { text: 'Size unknown', tone: 'neutral' };

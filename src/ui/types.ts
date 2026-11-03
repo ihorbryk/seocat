@@ -1,5 +1,6 @@
 /** Універсальні типи рядка таблиці. Group-незалежні: їх малюють компоненти з src/ui. */
-export type Tone = 'good' | 'warn';
+/** `neutral` — стан без попередження, `bad` — проблема, яку видно здалеку (червоний). */
+export type Tone = 'good' | 'warn' | 'bad' | 'neutral';
 
 export interface BadgeView {
   text: string;

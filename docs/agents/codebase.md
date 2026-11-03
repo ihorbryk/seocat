@@ -1,17 +1,17 @@
 # Як влаштовано код seocat
 
-Терміни (Page, Metric, Group, Missing, Empty, Duplicate, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003, поділ Group на дві половини — в ADR 0004.
+Терміни (Page, Metric, Group, Image, Missing, Empty, Duplicate, Not loaded, Size unknown, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003 (виняток для Images — ADR 0005), поділ Group на дві половини — в ADR 0004.
 
 ## Шари
 
 Дані проходять шлях `extract → envelope → measure → assess → View`:
 
-- `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`). Імпорти дозволені, бо все збирається в один `extract.js`.
+- `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`, `ImagesSnapshot`). Лише Images читає стан завантаження (`naturalWidth`, `currentSrc`, Resource Timing), і її тести підставляють ці значення на jsdom. Імпорти дозволені, бо все збирається в один `extract.js`.
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає половини Page з `src/groups/page-registry.ts` у `try/catch`, повертаючи конверт (`src/extract/envelope.ts`).
 - `src/popup/measure.ts`: `measure(port)` бере активну вкладку і результат `executeScript` через `TabPort` і повертає URL та `Outcome`; Unreadable визначає лише він (ADR 0002). Адаптер над `browser.*` — `src/popup/browser-port.ts`, у тестах — фейк.
 - `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
 - `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за `src/groups/popup-registry.tsx`, панель — `GroupPanel`), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (`measure(browserPort)`, остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
-- `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента.
+- `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `Tile`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента. Images малює не таблицю, а власний список (`src/groups/images/ImageRow.tsx`) з прев'ю, яке попап завантажує сам.
 
 ## Додати Metric
 
@@ -46,7 +46,7 @@
 
 - **Empty-sentinel.** Записи списків (canonical, robots, hreflang) зберігають Empty як `''`; `TextTag.value` — `null` для Missing і `''` для Empty.
 - **Текст і довжина.** `Intl.Segmenter` лише через `src/shared/` (`graphemes.ts`, `words.ts`); межі Length rating — константи поруч з `assess/<metric>.ts`.
-- **Кольори.** Лише семантичні токени з `@theme` у `src/popup/popup.css` (`text-good`, `bg-warn-bg`, …); `check:rules` відхиляє класи палітри.
+- **Кольори.** Лише семантичні токени з `@theme` у `src/popup/popup.css` (`text-good`, `bg-warn-bg`, `text-bad`, …); `check:rules` відхиляє класи палітри. Тони: `good`, `warn` (попередження), `bad` (червоний, лише важкий файл Image), `neutral` (стан без попередження: Empty alt, Not loaded, Size unknown).
 - **Мова.** UI англійською, коментарі, назви тестів, коміти і документація українською.
 
 ## Пастки

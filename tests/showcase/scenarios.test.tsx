@@ -12,11 +12,11 @@ describe('сценарії showcase', () => {
 
   const okScenarios = scenarios.filter((s) => s.outcome.kind === 'ok');
   it.each(okScenarios.flatMap((s) => popupGroups.map((g) => ({ ...s, tab: g.id }))))(
-    '$id, вкладка $tab: Popup малює таблицю Group',
+    '$id, вкладка $tab: Popup малює панель Group',
     ({ url, outcome, tab }) => {
       render(<Popup url={url} outcome={outcome} initialTab={tab} />);
       expect(screen.getByRole('tab', { selected: true }).id).toBe(`tab-${tab}`);
-      expect(screen.getByRole('table')).toBeTruthy();
+      expect(screen.getByRole('tabpanel').childElementCount).toBeGreaterThan(0);
     },
   );
 

@@ -112,6 +112,54 @@ export const scenarios: Scenario[] = [
     }),
   },
   {
+    id: 'images',
+    note: 'Images: усі стани alt, адреси і ваги; > 1 MB червоним (вкладка images)',
+    url: 'https://example.com/gallery',
+    outcome: okOutcome({
+      images: {
+        images: [
+          {
+            src: 'https://picsum.photos/id/10/1600/900',
+            alt: 'Ранковий ліс над озером',
+            natural: { width: 1600, height: 900 },
+            bytes: 250_880,
+          },
+          {
+            src: 'https://picsum.photos/id/29/4000/2667',
+            alt: null,
+            natural: { width: 4000, height: 2667 },
+            bytes: 2_412_544,
+          },
+          {
+            src: 'https://example.com/img/divider.svg',
+            alt: '',
+            natural: { width: 640, height: 8 },
+            bytes: 812,
+          },
+          {
+            src: 'https://cdn.example.net/assets/products/2026/11/very-long-file-name-for-wrapping-check-final-v2.webp',
+            alt: 'Довгий alt, який має перенестися на кілька рядків і не вийти за межі попапа шириною 460 пікселів',
+            natural: { width: 1200, height: 1200 },
+            bytes: null,
+          },
+          {
+            src: 'https://example.com/img/below-the-fold.jpg',
+            alt: 'Lazy-зображення нижче першого екрана',
+            natural: null,
+            bytes: null,
+          },
+          {
+            src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+            alt: 'Піксель',
+            natural: { width: 1, height: 1 },
+            bytes: 70,
+          },
+          { src: '', alt: null, natural: null, bytes: null },
+        ],
+      },
+    }),
+  },
+  {
     id: 'unreadable',
     note: 'Unreadable: внутрішня сторінка Safari',
     url: 'favorites://',

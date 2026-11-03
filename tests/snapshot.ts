@@ -1,4 +1,5 @@
 import type { ContentSnapshot } from '../src/groups/content/types';
+import type { ImageEntry, ImagesSnapshot } from '../src/groups/images/types';
 import type { IndexingSnapshot } from '../src/groups/indexing/types';
 import type { GroupId, GroupSnapshots } from '../src/groups/page-registry';
 import type { Outcome } from '../src/extract/envelope';
@@ -21,12 +22,29 @@ export function indexingSnapshot(over: Partial<IndexingSnapshot> = {}): Indexing
   return { canonical: [], robots: [], hreflang: [], ...over };
 }
 
+/** Знімок Group Images без Images; тести перекривають лише потрібні поля. */
+export function imagesSnapshot(over: Partial<ImagesSnapshot> = {}): ImagesSnapshot {
+  return { images: [], ...over };
+}
+
+/** Завантажений Image з alt і відомою вагою; тести перекривають лише потрібні поля. */
+export function imageEntry(over: Partial<ImageEntry> = {}): ImageEntry {
+  return {
+    src: 'https://example.com/a.png',
+    alt: 'A',
+    natural: { width: 100, height: 50 },
+    bytes: 1000,
+    ...over,
+  };
+}
+
 type Overrides = { [Id in GroupId]?: Partial<GroupSnapshots[Id]> };
 
 /** По фабриці на кожну Group з `page-registry`: нова Group без фабрики не збереться. */
 const factories: { [Id in GroupId]: (over?: Partial<GroupSnapshots[Id]>) => GroupSnapshots[Id] } = {
   content: contentSnapshot,
   indexing: indexingSnapshot,
+  images: imagesSnapshot,
 };
 
 /** Outcome `ok` зі знімками всіх Groups. */

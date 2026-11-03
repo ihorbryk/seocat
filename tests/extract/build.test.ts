@@ -51,6 +51,7 @@ it('зібраний extract.js обчислюється в конверт ok', 
         headings: [0, 0, 0, 0, 0, 0],
       },
       indexing: { canonical: [], robots: [], hreflang: [] },
+      images: { images: [] },
     },
   });
 });

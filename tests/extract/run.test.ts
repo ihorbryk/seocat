@@ -4,13 +4,14 @@ import { run } from '../../src/extract/run';
 import { loadFixture } from '../helpers';
 
 describe('extract run', () => {
-  it('HTML-сторінка: конверт ok зі знімками Content і Indexing', () => {
+  it('HTML-сторінка: конверт ok зі знімками всіх Groups', () => {
     const envelope = run(loadFixture('canonical-relative'));
     expect(envelope).toEqual({
       kind: 'ok',
       groups: {
         content: expect.objectContaining({ title: expect.any(Object) }),
         indexing: expect.objectContaining({ canonical: ['https://example.com/page?x=1'] }),
+        images: { images: [] },
       },
     });
   });
