@@ -66,6 +66,7 @@
             { "path": "../../../dist/manifest.json", "target-membership": [ "seocat Extension/resources" ] },
             { "path": "../../../dist/extract.js", "target-membership": [ "seocat Extension/resources" ] },
             { "path": "../../../dist/assets", "target-membership": [ "seocat Extension/resources" ] },
+            { "path": "../../../dist/icons", "target-membership": [ "seocat Extension/resources" ] },
           ],
         },
         { "path": "SafariWebExtensionHandler.swift", "target-membership": [ "seocat Extension/compile-sources" ] },
