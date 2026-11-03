@@ -33,6 +33,15 @@ describe('seo-basics extract: words', () => {
     expect(extract(doc('<p>1488</p>')).words).toBe(1);
     expect(extract(doc('<p>веб-сайт</p>')).words).toBe(2);
   });
+  it('сусідні блоки без пробілів між тегами розділяють слова', () => {
+    expect(extract(doc('<p>Hello</p><p>world</p>')).words).toBe(2);
+  });
+  it('<br> розділяє слова', () => {
+    expect(extract(doc('one<br>two')).words).toBe(2);
+  });
+  it('елементи списку без пробілів між тегами', () => {
+    expect(extract(doc('<ul><li>one</li><li>two</li><li>three</li></ul>')).words).toBe(3);
+  });
   it('порожнє тіло = 0', () => {
     expect(extract(doc('')).words).toBe(0);
   });
