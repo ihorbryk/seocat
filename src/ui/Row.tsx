@@ -1,17 +1,16 @@
 import { Badge } from './Badge';
 import type { RowView } from './types';
 
-/** Рядок таблиці: ліворуч назва Metric і бейджі під нею, праворуч значення(я) моноширинним шрифтом. */
+/** Рядок таблиці: ліворуч назва Metric, під нею лічильник і бейджі, праворуч значення(я) моноширинним шрифтом. */
 export function Row({ row }: { row: RowView }) {
   return (
     <tr class="border-b border-line align-top">
-      <th scope="row" class="w-32 px-2.5 py-1.5 text-left font-normal">
-        <span class="block font-semibold text-ink">
-          {row.label}
-          {row.count !== undefined && (
-            <span class="ml-1 font-normal text-muted tabular-nums">{row.count}</span>
-          )}
-        </span>
+      {/* 148px = 128px вмісту + відступи, як `th` у прототипі D (там content-box). */}
+      <th scope="row" class="w-37 px-2.5 py-1.5 text-left font-normal">
+        <span class="block font-semibold text-ink">{row.label}</span>
+        {row.count !== undefined && (
+          <span class="mt-0.5 block text-muted tabular-nums">{row.count}</span>
+        )}
         {row.badges.length > 0 && (
           <span class="mt-0.5 flex flex-wrap gap-1">
             {row.badges.map((badge) => (
