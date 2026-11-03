@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { extract } from '../../../../src/groups/seo-basics/extract';
-import { loadFixture } from '../../../helpers';
+import { loadFixture, parseHtml } from '../../../helpers';
 
 describe('seo-basics extract: canonical', () => {
   it('відносний href стає абсолютним', () => {
@@ -38,6 +38,10 @@ describe('seo-basics extract: robots', () => {
       { name: 'bingbot', content: '' },
       { name: 'googlebot', content: 'noarchive' },
     ]);
+  });
+  it('name з пробілами навколо не збігається (без обрізання)', () => {
+    const d = parseHtml('<meta name=" robots " content="noindex"><meta name="robots " content="x">');
+    expect(extract(d).robots).toEqual([]);
   });
   it('тегів немає: порожній список', () => {
     expect(extract(loadFixture('canonical-missing')).robots).toEqual([]);
