@@ -6,7 +6,7 @@
 
 Дані проходять шлях `extract → envelope → measure → assess → View`:
 
-- `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`, `ImagesSnapshot`). Лише Images читає стан завантаження (`naturalWidth`, `currentSrc`, Resource Timing), і її тести підставляють ці значення на jsdom. Імпорти дозволені, бо все збирається в один `extract.js`.
+- `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`, `ImagesSnapshot`). Лише Images читає стан завантаження (`naturalWidth`, `currentSrc`, Resource Timing, HTTP-кеш через `fetch`) і тому асинхронна; її тести підставляють ці значення на jsdom. Імпорти дозволені, бо все збирається в один `extract.js`.
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає половини Page з `src/groups/page-registry.ts` у `try/catch`, повертаючи конверт (`src/extract/envelope.ts`).
 - `src/popup/measure.ts`: `measure(port)` бере активну вкладку і результат `executeScript` через `TabPort` і повертає URL та `Outcome`; Unreadable визначає лише він (ADR 0002). Адаптер над `browser.*` — `src/popup/browser-port.ts`, у тестах — фейк.
 - `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
@@ -52,7 +52,7 @@
 ## Пастки
 
 - **Імпорт у `page.ts`.** Усе, що імпортує `page.ts` Group, інжектується в кожну Page. `assess`, `View`, `src/ui/` і preact туди не потрапляють; `tests/extract/build.test.ts` перевіряє склад бандла.
-- **Останній вираз `extract.js`.** `executeScript({ files })` повертає значення останнього виразу скрипта. Rollup загортає IIFE у `var … =`, і плагін у `vite.config.ts` це присвоєння прибирає. `tests/extract/build.test.ts` збирає справжній бандл і охороняє контракт.
+- **Останній вираз `extract.js`.** `executeScript({ files })` повертає значення останнього виразу скрипта, але Safari не приймає там Promise. Тому `extract.js` реєструє `__seocatMeasure` і повертає `true`, а `browserPort` другим викликом `executeScript({ func })` чекає на Promise конверта (ADR 0001). Rollup загортає IIFE у `var … =`, і плагін у `vite.config.ts` це присвоєння прибирає. `tests/extract/build.test.ts` збирає справжній бандл і охороняє контракт.
 - **Два проходи збірки.** `vite build` (попап) і `vite build --mode extract` пишуть в один `dist/` і не очищають його; очищає задача mise. Запуск `vite build` напряму залишить застарілі файли.
 - **`mise run xcode:init` перезаписує закомічений Xcode-проєкт.** Packager генерує нові id і власні імена іконок (`mac-icon-*.png`), які розходяться з `mise run icons`. Потрібен лише при зміні структури `dist/`; новий файл у `dist/` додається рядком у ресурси `xcode/seocat/seocat.xcodeproj/project.xcproj`, а `tests/xcode/resources.test.ts` перевіряє, що нічого не пропущено.
 - **Версія в трьох місцях.** Джерело правди — `version` у `public/manifest.json` (її показує попап), але бандли застосунку і розширення отримують версію з `MARKETING_VERSION` обох таргетів у `project.xcproj`. Піднімай усі три разом; `tests/xcode/version.test.ts` ловить розбіжність, зокрема відкат до `1.0` після `mise run xcode:init`.

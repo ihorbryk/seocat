@@ -30,16 +30,18 @@ it('extract.js не містить preact, src/ui/ і половини попа�
   ).toEqual([]);
 });
 
-// Охороняє контракт ADR 0001: останній вираз зібраного extract.js обчислюється в конверт
-// (саме це читає executeScript).
-it('зібраний extract.js обчислюється в конверт ok', () => {
+// Охороняє контракт ADR 0001: останній вираз зібраного extract.js — `true` (Safari не приймає
+// Promise як результат `files`), а зареєстрована `__seocatMeasure` дає Promise конверта для `func`.
+it('зібраний extract.js повертає true і реєструє __seocatMeasure з конвертом ok', async () => {
   const dom = new JSDOM('<!doctype html><title>Built</title>', {
     url: 'https://example.com/x?y=1#z',
     runScripts: 'outside-only',
   });
-  const result = dom.window.eval(code);
+  expect(dom.window.eval(code)).toBe(true);
+  const result: unknown = dom.window.eval('globalThis.__seocatMeasure()');
+  expect(result).toBeInstanceOf(dom.window.Promise);
 
-  expect(JSON.parse(JSON.stringify(result))).toEqual({
+  expect(JSON.parse(JSON.stringify(await result))).toEqual({
     kind: 'ok',
     groups: {
       content: {

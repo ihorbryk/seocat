@@ -11,18 +11,19 @@ const HTML_TYPES = ['text/html', 'application/xhtml+xml'];
 
 /**
  * Виконується на Page. Не-HTML -> `not-html` без запуску Groups (ADR 0002);
- * виняток будь-якої Group -> `failed`.
+ * виняток будь-якої Group (зокрема відхилений Promise) -> `failed`.
+ * Асинхронний, бо `extract` Group може повернути Promise (Images читає HTTP-кеш, ADR 0005).
  */
-export function run(
+export async function run(
   document: Document,
   groups: readonly ExtractableGroup[] = pageGroups,
-): Envelope {
+): Promise<Envelope> {
   if (!HTML_TYPES.includes(document.contentType)) {
     return { kind: 'not-html', contentType: document.contentType };
   }
   try {
     const snapshots: Record<string, unknown> = {};
-    for (const group of groups) snapshots[group.id] = group.extract(document);
+    for (const group of groups) snapshots[group.id] = await group.extract(document);
     return { kind: 'ok', groups: snapshots as GroupSnapshots };
   } catch (error) {
     return { kind: 'failed', message: error instanceof Error ? error.message : String(error) };

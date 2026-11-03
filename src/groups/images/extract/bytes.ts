@@ -1,13 +1,31 @@
+/** Скільки чекати на файл з кешу, щоб попап не завис на повільній мережі. */
+const FETCH_TIMEOUT_MS = 3000;
+
 /**
- * Вага завантаженого файлу: для `data:` з самого URI, інакше `encodedBodySize` з Resource Timing.
- * null, коли браузер її не віддає: cross-origin без `Timing-Allow-Origin` дає 0,
- * а запису може не бути (кеш у пам'яті, переповнений буфер).
+ * Вага завантаженого файлу (ADR 0005): для `data:` з самого URI, інакше `encodedBodySize`
+ * з Resource Timing, а коли там 0 або запису немає, то розмір файлу з HTTP-кешу через `fetch`.
+ * Resource Timing дає 0 для cross-origin без `Timing-Allow-Origin`, а Safari ще й для кожної
+ * картинки з кешу. Запису може не бути (кеш у пам'яті, переповнений буфер).
+ * null, коли браузер не віддає вагу жодним способом (cross-origin без CORS, файлу немає).
  */
-export function fileBytes(src: string): number | null {
+export async function fileBytes(src: string): Promise<number | null> {
   if (src.startsWith('data:')) return dataUriBytes(src);
   const entry = globalThis.performance?.getEntriesByName(src, 'resource')[0] as
     PerformanceResourceTiming | undefined;
-  return entry?.encodedBodySize || null;
+  return entry?.encodedBodySize || cachedBytes(src);
+}
+
+async function cachedBytes(src: string): Promise<number | null> {
+  try {
+    const response = await fetch(src, {
+      cache: 'force-cache',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+    if (!response.ok) return null;
+    return (await response.blob()).size;
+  } catch {
+    return null;
+  }
 }
 
 function dataUriBytes(uri: string): number {

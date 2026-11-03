@@ -25,7 +25,7 @@ The state of an Image whose file the browser has not loaded, such as a lazy imag
 _Avoid_: Broken, pending, missing (when the tag exists)
 
 **Size unknown**:
-The state of a loaded Image whose file size the browser does not reveal to seocat, typically a file from another origin.
+The state of a loaded Image whose file size the browser does not reveal to seocat, typically a file from another origin that sends no CORS headers.
 _Avoid_: Unknown, n/a
 
 **Missing**:
