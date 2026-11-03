@@ -10,7 +10,7 @@
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає Groups у `try/catch`, повертаючи конверт (`src/shared/envelope.ts`).
 - `src/popup/classify.ts`: результат `executeScript` або виняток перетворює на `Outcome`; Unreadable визначає лише попап (ADR 0002).
 - `src/groups/<group>/assess/`: чиста функція `PageSnapshot → GroupView` без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
-- `src/popup/Popup.tsx`: чистий вибір екрана за `Outcome` (таблиця Group або `StateScreen`). Його рендерять шел `App` і showcase.
+- `src/popup/Popup.tsx`: першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), далі чистий вибір екрана за `Outcome` (таблиця Group або `StateScreen`). Його рендерять шел `App` і showcase.
 - `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `UrlBlock`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента.
 
 ## Додати Metric

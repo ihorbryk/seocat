@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/preact';
 import { describe, expect, it } from 'vitest';
 import { Popup } from '../../src/popup/Popup';
+import { version } from '../../public/manifest.json';
 import { snapshot } from '../snapshot';
 
 describe('Popup', () => {
@@ -23,5 +24,16 @@ describe('Popup', () => {
     render(<Popup url="favorites://" outcome={{ kind: 'unreadable' }} />);
     expect(screen.getByTestId('url').textContent).toBe('favorites://');
     expect(screen.getByRole('heading').textContent).toBe("Can't read this page");
+  });
+
+  it.each([
+    ['ok', 'https://example.com/', { kind: 'ok', groups: { 'seo-basics': snapshot() } }],
+    ['не-ok', 'favorites://', { kind: 'unreadable' }],
+    ['не-ok без URL', undefined, { kind: 'failed', message: 'boom' }],
+  ] as const)('%s: першим рядком назва і версія з manifest', (_, url, outcome) => {
+    const { container } = render(<Popup url={url} outcome={outcome} />);
+    const line = screen.getByText(`seocat ${version}`);
+    expect(container.textContent?.startsWith(`seocat ${version}`)).toBe(true);
+    expect(line.textContent).toBe(`seocat ${version}`);
   });
 });
