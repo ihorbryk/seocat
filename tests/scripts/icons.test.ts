@@ -15,10 +15,12 @@ function pngSize(path: string) {
 
 describe('generateIcons', () => {
   let root: string;
+  // Рендер усіх PNG синхронний і займає ~6–8 с, а паралельно з tsc і Prettier
+  // (pre-commit хук) виходить за стандартні 10 с хука Vitest.
   beforeAll(() => {
     root = mkdtempSync(join(tmpdir(), 'seocat-icons-'));
     generateIcons(root);
-  });
+  }, 60_000);
 
   it('renders toolbar PNGs at 16, 19, 32, 38 px', () => {
     for (const n of [16, 19, 32, 38]) {
