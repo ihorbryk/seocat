@@ -1,0 +1,317 @@
+<!doctype html>
+<!--
+  PROTOTYPE — throwaway. Not v1 code.
+  Question: Popup layout for the single Group (.scratch/seocat-v1/issues/04-popup-layout.md).
+  Plan: three structurally different popup layouts, switchable via ?variant=A|B|C and the bottom bar (← → keys). D = combination picked by the user: B header + C table.
+  Also: ?page=healthy|problems|heavy (sample Page data), ?theme=auto|light|dark, ?w=320|380|460 (popup width).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>seocat popup prototype</title>
+<style>
+  /* ---------- tokens (popup) ---------- */
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff; --bg-2: #f4f4f6; --fg: #1d1d1f; --fg-2: #6e6e73; --line: #e3e3e8;
+    --good-fg: #1a7f37; --good-bg: #e6f4ea;
+    --warn-fg: #9a5b00; --warn-bg: #fff3d6;
+    --accent: #0a66d8;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1e1e20; --bg-2: #2a2a2d; --fg: #f2f2f4; --fg-2: #a1a1a6; --line: #3a3a3e;
+      --good-fg: #5fd17f; --good-bg: #173a22; --warn-fg: #ffc85a; --warn-bg: #3d2f10; --accent: #4c9bff;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1e20; --bg-2: #2a2a2d; --fg: #f2f2f4; --fg-2: #a1a1a6; --line: #3a3a3e;
+    --good-fg: #5fd17f; --good-bg: #173a22; --warn-fg: #ffc85a; --warn-bg: #3d2f10; --accent: #4c9bff;
+  }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+
+  /* ---------- prototype chrome (not part of the design) ---------- */
+  html, body { margin: 0; }
+  body { background: #8a8f98; font-family: var(--sans); min-height: 100vh; padding: 16px 16px 96px; box-sizing: border-box; }
+  .proto-controls { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; margin-bottom: 16px;
+    font: 12px/1.2 system-ui; color: #fff; }
+  .proto-controls label { display: flex; gap: 6px; align-items: center; }
+  .proto-controls select { font: inherit; }
+  .stage { display: flex; justify-content: center; }
+  .popup { background: var(--bg); color: var(--fg); border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    max-height: 600px; overflow-y: auto; font-size: 13px; line-height: 1.35; max-width: 100%; }
+  .switcher { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
+    gap: 4px; background: #111; color: #fff; padding: 6px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.4);
+    font: 13px system-ui; z-index: 10; }
+  .switcher button { background: #333; color: #fff; border: 0; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+  .switcher span { padding: 0 12px; white-space: nowrap; }
+  .proto-state { text-align: center; font: 11px var(--mono); color: #eee; margin-top: 12px; }
+
+  /* ---------- shared atoms ---------- */
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .badge.good { color: var(--good-fg); background: var(--good-bg); }
+  .badge.warn { color: var(--warn-fg); background: var(--warn-bg); }
+  .url { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+  .muted { color: var(--fg-2); }
+
+  /* ---------- Variant A: sectioned list ---------- */
+  .a-head { padding: 12px 14px 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); }
+  .a-head .brand { font-weight: 700; font-size: 13px; }
+  .a-head .url { color: var(--fg-2); margin-top: 4px; display: block; }
+  .a-sec { padding: 4px 14px 10px; border-bottom: 1px solid var(--line); }
+  .a-sec h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-2); margin: 10px 0 6px; }
+  .a-row { padding: 6px 0; }
+  .a-row + .a-row { border-top: 1px dashed var(--line); }
+  .a-label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 3px; }
+  .a-label .badges { display: flex; gap: 4px; }
+  .a-val { overflow-wrap: anywhere; }
+  .a-list { margin: 0; padding: 0; list-style: none; }
+  .a-list li { padding: 2px 0; display: flex; gap: 8px; }
+  .a-list .k { font-family: var(--mono); font-size: 12px; min-width: 64px; color: var(--fg-2); flex: none; }
+  .a-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .a-nums div { display: flex; justify-content: space-between; padding: 4px 0; }
+  .a-nums b { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Variant B: summary first, expandable rows ---------- */
+  .b-top { padding: 12px 14px; background: var(--bg-2); }
+  .b-top .url { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--fg-2); }
+  .b-big { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .b-big div { background: var(--bg); border-radius: 8px; padding: 8px; text-align: center; }
+  .b-big b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .b-big span { font-size: 11px; color: var(--fg-2); }
+  .b-hx { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 8px; align-items: end; height: 64px; }
+  .b-hx div { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; font-size: 11px; }
+  .b-hx i { display: block; width: 70%; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; opacity: .8; }
+  .b-hx i.zero { background: var(--line); }
+  .b-rows details { border-bottom: 1px solid var(--line); }
+  .b-rows summary { list-style: none; cursor: pointer; padding: 9px 14px; display: grid; grid-template-columns: 92px 1fr auto; gap: 8px; align-items: center; }
+  .b-rows summary::-webkit-details-marker { display: none; }
+  .b-rows summary .lbl { font-weight: 600; }
+  .b-rows summary .one { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .b-rows details[open] summary .one { visibility: hidden; }
+  .b-rows .full { padding: 0 14px 10px; overflow-wrap: anywhere; }
+  .b-rows .full .item { padding: 3px 0; border-top: 1px dashed var(--line); }
+  .b-rows .full .item:first-child { border-top: 0; }
+
+  /* ---------- Variant C: dense key/value table ---------- */
+  .c-table { width: 100%; border-collapse: collapse; }
+  .c-table th, .c-table td { text-align: left; vertical-align: top; padding: 5px 10px; border-bottom: 1px solid var(--line); }
+  .c-table th { width: 84px; font-weight: 500; color: var(--fg-2); font-size: 12px; white-space: nowrap; }
+  .c-table td { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+  .c-table td .badge { font-family: var(--sans); margin-left: 4px; }
+  .c-table tr.sep th, .c-table tr.sep td { background: var(--bg-2); font: 600 10px var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-2); padding: 4px 10px; }
+  .c-table .multi div + div { margin-top: 3px; padding-top: 3px; border-top: 1px dotted var(--line); }
+  .c-hx { display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; }
+  .c-hx span { color: var(--fg-2); font-size: 10px; display: block; }
+
+  /* ---------- Variant D: B header + C table, badges under the Metric name ---------- */
+  .d-top .url { white-space: normal; overflow: visible; color: var(--fg-2); }
+  .d-table th { width: 128px; white-space: normal; }
+  .d-table th .badge { display: inline-block; margin: 3px 3px 0 0; font-family: var(--sans); color: var(--warn-fg); }
+  .d-table th .badge.good { color: var(--good-fg); }
+  .d-table th .lbl { color: var(--fg); font-weight: 600; display: block; }
+</style>
+</head>
+<body>
+  <div class="proto-controls">
+    <label>Page <select id="page">
+      <option value="healthy">healthy</option>
+      <option value="problems">problems (Missing/Empty/Duplicate)</option>
+      <option value="heavy">heavy (long values, many tags)</option>
+    </select></label>
+    <label>Theme <select id="theme"><option>auto</option><option>light</option><option>dark</option></select></label>
+    <label>Width <select id="w"><option>320</option><option>380</option><option selected>460</option></select></label>
+  </div>
+  <div class="stage"><div class="popup" id="popup"></div></div>
+  <div class="proto-state" id="state"></div>
+  <div class="switcher"><button id="prev" aria-label="Previous variant">←</button><span id="vlabel"></span><button id="next" aria-label="Next variant">→</button></div>
+
+<script>
+/* ---------- sample Page data, shaped like the extraction result ---------- */
+// each text-ish Metric: { values: [...] } — [] = Missing; value '' = Empty; >1 = Duplicate (title/description)
+const PAGES = {
+  healthy: {
+    url: 'https://example.com/blog/safari-extensions-guide',
+    title: ['How to Build a Safari Web Extension in 2026 | Example Blog'],
+    description: ['A step-by-step guide to building, signing and running a Safari Web Extension on macOS with TypeScript and Vite, from manifest to Xcode wrapper.'],
+    canonical: ['https://example.com/blog/safari-extensions-guide'],
+    hreflang: [['en', 'https://example.com/blog/safari-extensions-guide'], ['uk', 'https://example.com/uk/blog/safari-extensions-guide'], ['x-default', 'https://example.com/blog/safari-extensions-guide']],
+    robots: [['robots', 'index, follow, max-image-preview:large']],
+    words: 1842, h: [1, 6, 11, 0, 0, 0], images: 14, links: 87,
+  },
+  problems: {
+    url: 'https://shop.example.com/products?id=8812',
+    title: ['Buy', 'Product 8812 — Example Shop'],
+    description: [],
+    canonical: ['', 'https://shop.example.com/products'],
+    hreflang: [],
+    robots: [['robots', ''], ['googlebot', 'noindex']],
+    words: 37, h: [0, 0, 2, 0, 0, 0], images: 0, links: 212,
+  },
+  heavy: {
+    url: 'https://www.example-media-group.com.ua/novyny/ekonomika/2026/11/03/yak-shtuchnyi-intelekt-zminiuie-rynok-pratsi?utm_source=newsletter&utm_medium=email&utm_campaign=daily-digest#comments',
+    title: ['Як штучний інтелект змінює ринок праці в Україні: аналітика, прогнози та думки експертів 👍🏽'],
+    description: ['Огляд того, як ШІ впливає на зайнятість.'],
+    canonical: ['https://www.example-media-group.com.ua/novyny/ekonomika/2026/11/03/yak-shtuchnyi-intelekt-zminiuie-rynok-pratsi'],
+    hreflang: ['uk', 'en', 'en-GB', 'de', 'fr', 'pl', 'es', 'it', 'pt-BR', 'cs', 'ro', 'x-default', 'EN_us', 'ua']
+      .map(c => [c, `https://www.example-media-group.com.ua/${c.toLowerCase()}/novyny/ekonomika/2026/11/03/yak-shtuchnyi-intelekt`]),
+    robots: [['robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'], ['googlebot', 'index, follow'], ['googlebot-news', 'nosnippet'], ['bingbot', 'noarchive']],
+    words: 12403, h: [2, 18, 41, 7, 1, 0], images: 63, links: 1488,
+  },
+};
+
+/* ---------- Metric logic (as decided in tickets 02 and 03) ---------- */
+const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+const glen = s => [...seg.segment(s)].length;
+const RANGES = { title: [30, 60], description: [70, 160] };
+function textState(key, values) {
+  if (values.length === 0) return { state: 'Missing' };
+  const v = values[0];
+  if (v === '') return { state: 'Empty', dup: values.length > 1 ? values.length : 0 };
+  const n = glen(v), [lo, hi] = RANGES[key];
+  return { value: v, len: n, rating: n < lo ? 'Short' : n > hi ? 'Long' : 'Good', dup: values.length > 1 ? values.length : 0 };
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const B = (t, kind = 'warn') => `<span class="badge ${kind}">${esc(t)}</span>`;
+const fmt = n => n.toLocaleString('en-US');
+function textBadges(s) {
+  const out = [];
+  if (s.state) out.push(B(s.state));
+  if (s.len != null) out.push(B(`${s.len} chars · ${s.rating}`, s.rating === 'Good' ? 'good' : 'warn'));
+  if (s.dup) out.push(B(`Duplicate ×${s.dup}`));
+  return out.join(' ');
+}
+const emptyOr = (v, html) => v === '' ? B('Empty') : html;
+const multiBadges = (arr, dupable) => arr.length === 0 ? B('Missing') : (dupable && arr.length > 1 ? B(`Duplicate ×${arr.length}`) : `<span class="muted">${arr.length}</span>`);
+
+/* ---------- Variant A: sectioned list (everything visible, wrapped) ---------- */
+function VariantA(p) {
+  const t = textState('title', p.title), d = textState('description', p.description);
+  const textRow = (label, s) => `<div class="a-row"><div class="a-label">${label}<span class="badges">${textBadges(s)}</span></div>
+    ${s.value ? `<div class="a-val">${esc(s.value)}</div>` : ''}</div>`;
+  const listRow = (label, items, dupable, render) => `<div class="a-row"><div class="a-label">${label}<span class="badges">${multiBadges(items, dupable)}</span></div>
+    ${items.length ? `<ul class="a-list">${items.map(render).join('')}</ul>` : ''}</div>`;
+  return `
+  <div class="a-head"><div class="brand">seocat</div><span class="url">${esc(p.url)}</span></div>
+  <div class="a-sec"><h2>Meta</h2>${textRow('Title', t)}${textRow('Description', d)}</div>
+  <div class="a-sec"><h2>Indexing</h2>
+    ${listRow('Canonical', p.canonical, true, c => `<li>${emptyOr(c, `<span class="url">${esc(c)}</span>`)}</li>`)}
+    ${listRow('Robots', p.robots, false, ([n, c]) => `<li><span class="k">${esc(n)}</span>${emptyOr(c, `<span>${esc(c)}</span>`)}</li>`)}
+    ${listRow('hreflang', p.hreflang, false, ([l, u]) => `<li><span class="k">${esc(l)}</span>${emptyOr(u, `<span class="url">${esc(u)}</span>`)}</li>`)}
+  </div>
+  <div class="a-sec"><h2>Content</h2>
+    <div class="a-nums"><div>Words <b>${fmt(p.words)}</b></div><div>Images <b>${fmt(p.images)}</b></div><div>Links <b>${fmt(p.links)}</b></div></div>
+    <div class="a-nums">${p.h.map((n, i) => `<div>H${i + 1} <b>${n}</b></div>`).join('')}</div>
+  </div>`;
+}
+
+/* ---------- Variant B: numbers on top, one-line rows that expand ---------- */
+function VariantB(p) {
+  const t = textState('title', p.title), d = textState('description', p.description);
+  const max = Math.max(1, ...p.h);
+  const row = (label, oneLine, right, full, open = false) => `<details${open ? ' open' : ''}><summary><span class="lbl">${label}</span><span class="one">${oneLine}</span><span>${right}</span></summary>${full ? `<div class="full">${full}</div>` : ''}</details>`;
+  const items = arr => arr.map(x => `<div class="item">${x}</div>`).join('');
+  return `
+  <div class="b-top">
+    <span class="url" title="${esc(p.url)}">${esc(p.url)}</span>
+    <div class="b-big"><div><b>${fmt(p.words)}</b><span>words</span></div><div><b>${fmt(p.images)}</b><span>images</span></div><div><b>${fmt(p.links)}</b><span>links</span></div></div>
+    <div class="b-hx">${p.h.map((n, i) => `<div><b>${n}</b><i class="${n ? '' : 'zero'}" style="height:${n ? Math.max(6, n / max * 36) : 2}px"></i><span class="muted">H${i + 1}</span></div>`).join('')}</div>
+  </div>
+  <div class="b-rows">
+    ${row('URL', `<span class="url">${esc(p.url)}</span>`, '', `<span class="url">${esc(p.url)}</span>`)}
+    ${row('Title', esc(t.value ?? ''), textBadges(t), t.value ? esc(t.value) : '')}
+    ${row('Description', esc(d.value ?? ''), textBadges(d), d.value ? esc(d.value) : '')}
+    ${row('Canonical', p.canonical.length === 1 ? `<span class="url">${esc(p.canonical[0])}</span>` : '', multiBadges(p.canonical, true) + (p.canonical.length === 1 && p.canonical[0] === '' ? ' ' + B('Empty') : ''),
+         items(p.canonical.map(c => emptyOr(c, `<span class="url">${esc(c)}</span>`))))}
+    ${row('Robots', esc(p.robots.map(([n, c]) => `${n}: ${c || '∅'}`).join(' · ')), multiBadges(p.robots, false),
+         items(p.robots.map(([n, c]) => `<b>${esc(n)}</b>: ${emptyOr(c, esc(c))}`)))}
+    ${row('hreflang', esc(p.hreflang.map(([l]) => l).join(', ')), multiBadges(p.hreflang, false),
+         items(p.hreflang.map(([l, u]) => `<b>${esc(l)}</b> → ${emptyOr(u, `<span class="url">${esc(u)}</span>`)}`)))}
+  </div>`;
+}
+
+/* ---------- Variant C: dense DevTools-style table ---------- */
+function VariantC(p) {
+  const t = textState('title', p.title), d = textState('description', p.description);
+  const sep = s => `<tr class="sep"><th colspan="2">${s}</th></tr>`;
+  const tr = (k, v) => `<tr><th>${k}</th><td>${v}</td></tr>`;
+  const textCell = s => (s.value ? esc(s.value) + '<br>' : '') + textBadges(s);
+  const multi = (arr, dupable, render) => arr.length === 0 ? B('Missing') :
+    `<div class="multi">${arr.map(render).join('')}</div>${dupable && arr.length > 1 ? B(`Duplicate ×${arr.length}`) : ''}`;
+  return `<table class="c-table">
+    ${sep('Page')}
+    ${tr('URL', esc(p.url))}
+    ${tr('Title', textCell(t))}
+    ${tr('Description', textCell(d))}
+    ${sep('Indexing')}
+    ${tr('Canonical', multi(p.canonical, true, c => `<div>${emptyOr(c, esc(c))}</div>`))}
+    ${tr('Robots', multi(p.robots, false, ([n, c]) => `<div>${esc(n)}: ${emptyOr(c, esc(c))}</div>`))}
+    ${tr(`hreflang${p.hreflang.length ? ` <span class="muted">(${p.hreflang.length})</span>` : ''}`, multi(p.hreflang, false, ([l, u]) => `<div>${esc(l)} → ${emptyOr(u, esc(u))}</div>`))}
+    ${sep('Content')}
+    ${tr('Words', fmt(p.words))}
+    ${tr('Headings', `<div class="c-hx">${p.h.map((n, i) => `<div><span>H${i + 1}</span>${n}</div>`).join('')}</div>`)}
+    ${tr('Images', fmt(p.images))}
+    ${tr('Links', fmt(p.links))}
+  </table>`;
+}
+
+/* ---------- Variant D: header from B, table from C, badges next to the Metric name ---------- */
+function VariantD(p) {
+  const t = textState('title', p.title), d = textState('description', p.description);
+  const max = Math.max(1, ...p.h);
+  const tr = (k, badges, v) => `<tr><th><span class="lbl">${k}</span>${badges}</th><td>${v}</td></tr>`;
+  const sep = s => `<tr class="sep"><th colspan="2">${s}</th></tr>`;
+  const listBadges = (arr, dupable) => arr.length === 0 ? B('Missing') : (dupable && arr.length > 1 ? B(`Duplicate ×${arr.length}`) : `<span class="muted">${arr.length}</span>`);
+  const multi = (arr, render) => arr.length ? `<div class="multi">${arr.map(render).join('')}</div>` : '';
+  return `
+  <div class="b-top d-top">
+    <span class="url">${esc(p.url)}</span>
+    <div class="b-big"><div><b>${fmt(p.words)}</b><span>words</span></div><div><b>${fmt(p.images)}</b><span>images</span></div><div><b>${fmt(p.links)}</b><span>links</span></div></div>
+    <div class="b-hx">${p.h.map((n, i) => `<div><b>${n}</b><i class="${n ? '' : 'zero'}" style="height:${n ? Math.max(6, n / max * 36) : 2}px"></i><span class="muted">H${i + 1}</span></div>`).join('')}</div>
+  </div>
+  <table class="c-table d-table">
+    ${sep('Meta')}
+    ${tr('Title', textBadges(t), esc(t.value ?? ''))}
+    ${tr('Description', textBadges(d), esc(d.value ?? ''))}
+    ${sep('Indexing')}
+    ${tr('Canonical', listBadges(p.canonical, true), multi(p.canonical, c => `<div>${emptyOr(c, esc(c))}</div>`))}
+    ${tr('Robots', listBadges(p.robots, false), multi(p.robots, ([n, c]) => `<div>${esc(n)}: ${emptyOr(c, esc(c))}</div>`))}
+    ${tr('hreflang', listBadges(p.hreflang, false), multi(p.hreflang, ([l, u]) => `<div>${esc(l)} → ${emptyOr(u, esc(u))}</div>`))}
+  </table>`;
+}
+
+/* ---------- switcher wiring ---------- */
+const VARIANTS = [['A', 'Sectioned list', VariantA], ['B', 'Summary first, expandable rows', VariantB], ['C', 'Dense table', VariantC], ['D', 'B header + C table', VariantD]];
+const qs = new URLSearchParams(location.search);
+const st = { variant: qs.get('variant') || 'D', page: qs.get('page') || 'healthy', theme: qs.get('theme') || 'auto', w: qs.get('w') || '460' };
+function render() {
+  const i = Math.max(0, VARIANTS.findIndex(v => v[0] === st.variant));
+  const [key, name, fn] = VARIANTS[i];
+  st.variant = key;
+  document.documentElement.toggleAttribute('data-theme', st.theme !== 'auto');
+  if (st.theme !== 'auto') document.documentElement.dataset.theme = st.theme;
+  const pop = document.getElementById('popup');
+  pop.style.width = st.w + 'px';
+  pop.innerHTML = fn(PAGES[st.page] || PAGES.healthy);
+  document.getElementById('vlabel').textContent = `${key} (${name})`;
+  for (const k of ['page', 'theme', 'w']) document.getElementById(k).value = st[k];
+  history.replaceState(null, '', '?' + new URLSearchParams(st));
+  document.getElementById('state').textContent = `variant=${st.variant} page=${st.page} theme=${st.theme} width=${st.w}px · popup height ${pop.scrollHeight}px (capped at 600)`;
+}
+const step = d => { const i = VARIANTS.findIndex(v => v[0] === st.variant); st.variant = VARIANTS[(i + d + VARIANTS.length) % VARIANTS.length][0]; render(); };
+document.getElementById('prev').onclick = () => step(-1);
+document.getElementById('next').onclick = () => step(1);
+addEventListener('keydown', e => {
+  if (e.target.closest('input, textarea, select, [contenteditable]')) return;
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+for (const k of ['page', 'theme', 'w']) document.getElementById(k).onchange = e => { st[k] = e.target.value; render(); };
+render();
+</script>
+</body>
+</html>
