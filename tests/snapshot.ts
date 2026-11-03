@@ -5,6 +5,9 @@ export function snapshot(over: Partial<PageSnapshot> = {}): PageSnapshot {
   return {
     url: 'https://example.com/',
     title: { count: 1, value: 'Hi' },
+    canonical: [],
+    robots: [],
+    hreflang: [],
     description: { count: 0, value: null },
     words: 0,
     images: 0,

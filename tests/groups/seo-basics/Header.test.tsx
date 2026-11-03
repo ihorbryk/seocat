@@ -3,17 +3,17 @@ import { describe, expect, it } from 'vitest';
 import { View } from '../../../src/groups/seo-basics/View';
 import { assess } from '../../../src/groups/seo-basics/assess';
 import type { PageSnapshot } from '../../../src/groups/seo-basics/types';
+import { snapshot } from '../../snapshot';
 
-const snap = (over: Partial<PageSnapshot> = {}): PageSnapshot => ({
-  url: 'https://example.com/a?b=1&c=2#frag',
-  title: { count: 1, value: 'Hello' },
-  description: { count: 0, value: null },
-  words: 1488,
-  images: 12,
-  links: 0,
-  headings: [1, 4, 0, 2, 0, 0],
-  ...over,
-});
+const snap = (over: Partial<PageSnapshot> = {}): PageSnapshot =>
+  snapshot({
+    url: 'https://example.com/a?b=1&c=2#frag',
+    title: { count: 1, value: 'Hello' },
+    words: 1488,
+    images: 12,
+    headings: [1, 4, 0, 2, 0, 0],
+    ...over,
+  });
 
 describe('View seo-basics', () => {
   it('показує повний URL без нормалізації і рядок Title', () => {
