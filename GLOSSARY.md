@@ -13,12 +13,32 @@ A single fact about the Page, such as the length of its meta title or its number
 _Avoid_: Indicator, parameter, field, stat
 
 **Group**:
-A named set of Metrics shown together on its own tab of the popup. There are three Groups: **Content** (what the Page says, such as its meta title and description), **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang) and **Images** (every Image on the Page with its alt text, address, pixel dimensions and file size).
+A named set of Metrics shown together on its own tab of the popup. There are four Groups: **Content** (what the Page says, such as its meta title and description), **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang), **Images** (every Image on the Page with its alt text, address, pixel dimensions and file size) and **Links** (every Link on the Page with its anchor text, address, whether it is Internal or External, and whether it is Nofollow).
 _Avoid_: Section, category, data block
 
 **Image**:
 One `<img>` element of the Page, listed in document order; the same file used twice is two Images. Inline SVG, CSS backgrounds and favicons are not Images.
 _Avoid_: Picture, photo, asset
+
+**Link**:
+One `<a>` element of the Page that has an `href`, listed in document order, whatever its scheme (`mailto:`, `tel:`, a fragment); the same address used twice is two Links. `<area>` and `<link>` are not Links.
+_Avoid_: Anchor (when meaning the element), URL, href
+
+**Anchor text**:
+The text a Link shows: its text content, or the alt of an Image inside it when it has no text. A Link with neither has Empty anchor text.
+_Avoid_: Link text, title, label
+
+**Internal**:
+A Link whose address points to the Page's own host, ignoring a leading `www.`, the scheme and the port; a fragment on the Page itself is Internal. Subdomains are not the same host.
+_Avoid_: Local, on-site
+
+**External**:
+A Link whose web address points to any other host, including a subdomain of the Page's host. A Link with a non-web scheme such as `mailto:` or `tel:` is neither Internal nor External.
+_Avoid_: Outbound, off-site, foreign
+
+**Nofollow**:
+A Link whose `rel` asks search engines not to pass trust through it: `nofollow`, `sponsored` or `ugc`.
+_Avoid_: Dofollow (as the opposite term), blocked
 
 **Not loaded**:
 The state of an Image whose file the browser has not loaded, such as a lazy image below the fold or a broken one, so its pixel dimensions and file size are unknown.

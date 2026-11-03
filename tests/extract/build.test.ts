@@ -53,6 +53,7 @@ it('зібраний extract.js повертає true і реєструє __seoc
       },
       indexing: { canonical: [], robots: [], hreflang: [] },
       images: { images: [] },
+      links: { page: 'https://example.com/x?y=1#z', links: [] },
     },
   });
 });

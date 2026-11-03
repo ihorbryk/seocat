@@ -1,5 +1,6 @@
 import type { ContentSnapshot } from '../src/groups/content/types';
 import type { ImageEntry, ImagesSnapshot } from '../src/groups/images/types';
+import type { LinkEntry, LinksSnapshot } from '../src/groups/links/types';
 import type { IndexingSnapshot } from '../src/groups/indexing/types';
 import type { GroupId, GroupSnapshots } from '../src/groups/page-registry';
 import type { Outcome } from '../src/extract/envelope';
@@ -37,6 +38,16 @@ export function imageEntry(over: Partial<ImageEntry> = {}): ImageEntry {
   };
 }
 
+/** Знімок Group Links без Links на `https://example.com/`; тести перекривають лише потрібні поля. */
+export function linksSnapshot(over: Partial<LinksSnapshot> = {}): LinksSnapshot {
+  return { page: 'https://example.com/', links: [], ...over };
+}
+
+/** Internal Link з текстом і без `rel`; тести перекривають лише потрібні поля. */
+export function linkEntry(over: Partial<LinkEntry> = {}): LinkEntry {
+  return { href: 'https://example.com/about', text: 'About', imageAlts: [], rel: [], ...over };
+}
+
 type Overrides = { [Id in GroupId]?: Partial<GroupSnapshots[Id]> };
 
 /** По фабриці на кожну Group з `page-registry`: нова Group без фабрики не збереться. */
@@ -44,6 +55,7 @@ const factories: { [Id in GroupId]: (over?: Partial<GroupSnapshots[Id]>) => Grou
   content: contentSnapshot,
   indexing: indexingSnapshot,
   images: imagesSnapshot,
+  links: linksSnapshot,
 };
 
 /** Outcome `ok` зі знімками всіх Groups. */

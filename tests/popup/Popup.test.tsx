@@ -47,10 +47,10 @@ describe('Popup: каркас', () => {
 });
 
 describe('Popup: вкладки', () => {
-  it('вкладки Content, Indexing і Images у порядку реєстру, за замовчуванням Content', () => {
+  it('вкладки Content, Indexing, Images і Links у порядку реєстру, за замовчуванням Content', () => {
     render(<Popup url={URL} outcome={ok()} />);
     const tabs = screen.getAllByRole('tab');
-    expect(tabs.map((t) => t.textContent)).toEqual(['Content', 'Indexing', 'Images']);
+    expect(tabs.map((t) => t.textContent)).toEqual(['Content', 'Indexing', 'Images', 'Links']);
     expect(screen.getByRole('tab', { selected: true }).textContent).toBe('Content');
     const panel = screen.getByRole('tabpanel');
     expect(within(panel).getByText('Title')).toBeTruthy();
@@ -89,6 +89,7 @@ describe('Popup: вкладки', () => {
     const content = screen.getByRole('tab', { name: 'Content' });
     const indexing = screen.getByRole('tab', { name: 'Indexing' });
     const images = screen.getByRole('tab', { name: 'Images' });
+    const links = screen.getByRole('tab', { name: 'Links' });
 
     fireEvent.keyDown(content, { key: 'ArrowRight' });
     expect(indexing.getAttribute('aria-selected')).toBe('true');
@@ -96,11 +97,18 @@ describe('Popup: вкладки', () => {
 
     fireEvent.keyDown(indexing, { key: 'ArrowRight' });
     fireEvent.keyDown(images, { key: 'ArrowRight' });
+    fireEvent.keyDown(links, { key: 'ArrowRight' });
     expect(content.getAttribute('aria-selected')).toBe('true');
 
     fireEvent.keyDown(content, { key: 'ArrowLeft' });
-    expect(images.getAttribute('aria-selected')).toBe('true');
-    expect(onTabChange.mock.calls).toEqual([['indexing'], ['images'], ['content'], ['images']]);
+    expect(links.getAttribute('aria-selected')).toBe('true');
+    expect(onTabChange.mock.calls).toEqual([
+      ['indexing'],
+      ['images'],
+      ['links'],
+      ['content'],
+      ['links'],
+    ]);
   });
 
   it('панель підписана активною вкладкою, неактивна вкладка поза Tab-порядком', () => {

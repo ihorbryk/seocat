@@ -2,6 +2,7 @@ import type { JSX } from 'preact';
 import { content } from './content/popup';
 import { images } from './images/popup';
 import { indexing } from './indexing/popup';
+import { links } from './links/popup';
 import type { GroupId, GroupSnapshots } from './page-registry';
 
 /** Половина попапа однієї Group: назва вкладки і панель, що з знімка малює view. */
@@ -17,7 +18,7 @@ type AnyPopupGroup = { [Id in GroupId]: PopupGroup<Id> }[GroupId];
 type CoversAll<T extends readonly AnyPopupGroup[]> =
   Exclude<GroupId, T[number]['id']> extends never ? T : never;
 
-const list = [content, indexing, images] as const satisfies readonly AnyPopupGroup[];
+const list = [content, indexing, images, links] as const satisfies readonly AnyPopupGroup[];
 
 /** Половини попапа (ADR 0004). Порядок = порядок вкладок; перша вкладка за замовчуванням. */
 export const popupGroups: CoversAll<typeof list> = list;

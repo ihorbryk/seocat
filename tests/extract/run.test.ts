@@ -12,6 +12,7 @@ describe('extract run', () => {
         content: expect.objectContaining({ title: expect.any(Object) }),
         indexing: expect.objectContaining({ canonical: ['https://example.com/page?x=1'] }),
         images: { images: [] },
+        links: expect.objectContaining({ links: [] }),
       },
     });
   });

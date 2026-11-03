@@ -157,6 +157,55 @@ export const scenarios: Scenario[] = [
     }),
   },
   {
+    id: 'links',
+    note: 'Links: Internal, External, Nofollow, посилання-картинка, Empty, інші схеми; плитки-фільтри (вкладка links)',
+    url: 'https://www.example.com/blog/safari-extensions-guide',
+    outcome: okOutcome({
+      links: {
+        page: 'https://www.example.com/blog/safari-extensions-guide',
+        links: [
+          { href: 'https://www.example.com/', text: '', imageAlts: ['Example Blog'], rel: [] },
+          { href: 'https://www.example.com/blog', text: 'Blog', imageAlts: [], rel: [] },
+          {
+            href: 'https://www.example.com/blog/safari-extensions-guide#manifest',
+            text: 'Manifest',
+            imageAlts: [],
+            rel: [],
+          },
+          {
+            href: 'https://developer.apple.com/documentation/safariservices/safari-web-extensions',
+            text: 'Safari Web Extensions documentation',
+            imageAlts: [],
+            rel: ['noopener'],
+          },
+          {
+            href: 'https://shop.example.com/deals',
+            text: 'Deals',
+            imageAlts: [],
+            rel: ['sponsored', 'nofollow'],
+          },
+          {
+            href: 'https://forum.example.org/u/someone',
+            text: 'someone',
+            imageAlts: [],
+            rel: ['ugc'],
+          },
+          {
+            href: 'https://cdn.example.net/assets/downloads/2026/11/very-long-file-name-for-wrapping-check-final-v2.zip?utm_source=blog&utm_medium=link',
+            text: 'Довгий Anchor text, який має перенестися на кілька рядків і не вийти за межі попапа шириною 460 пікселів',
+            imageAlts: [],
+            rel: [],
+          },
+          { href: 'https://www.example.com/share', text: '', imageAlts: [], rel: [] },
+          { href: 'mailto:hello@example.com', text: 'Write to us', imageAlts: [], rel: [] },
+          { href: 'tel:+380441234567', text: '+38 044 123 45 67', imageAlts: [], rel: [] },
+          { href: 'javascript:void(0)', text: 'Open menu', imageAlts: [], rel: [] },
+          { href: '', text: 'Back to top', imageAlts: [], rel: [] },
+        ],
+      },
+    }),
+  },
+  {
     id: 'unreadable',
     note: 'Unreadable: внутрішня сторінка Safari',
     url: 'favorites://',
