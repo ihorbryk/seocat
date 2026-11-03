@@ -43,6 +43,13 @@ describe('images extract: які Images і в якому порядку', () => 
     ]);
   });
 
+  it('у <picture> лише <img>, <source> не є Image', () => {
+    const doc = parseHtml(
+      '<base href="https://example.com/"><picture><source srcset="b.webp"><img src="b.png"></picture>',
+    );
+    expect(extract(doc).images.map((i) => i.src)).toEqual(['https://example.com/b.png']);
+  });
+
   it('сторінка без <img>: порожній список', () => {
     expect(extract(parseHtml('<p>text</p>')).images).toEqual([]);
   });

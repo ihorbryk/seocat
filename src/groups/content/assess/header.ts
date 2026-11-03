@@ -1,7 +1,7 @@
 import type { ContentSnapshot } from '../types';
 
 export interface TileView {
-  id: 'words' | 'images' | 'links';
+  id: 'words' | 'links';
   /** Число з роздільниками тисяч. */
   value: string;
   label: string;
@@ -14,7 +14,7 @@ export interface HeadingBarView {
   ratio: number;
 }
 
-/** Хедер: три плитки, діаграма H1–H6. */
+/** Хедер: дві плитки, діаграма H1–H6. */
 export interface HeaderView {
   tiles: TileView[];
   headings: HeadingBarView[];
@@ -27,7 +27,6 @@ export function assessHeader(snapshot: ContentSnapshot): HeaderView {
   return {
     tiles: [
       { id: 'words', value: fmt.format(snapshot.words), label: 'words' },
-      { id: 'images', value: fmt.format(snapshot.images), label: 'images' },
       { id: 'links', value: fmt.format(snapshot.links), label: 'links' },
     ],
     headings: snapshot.headings.map((count, i) => ({

@@ -9,7 +9,7 @@ The document currently loaded in the active Safari tab that seocat inspects.
 _Avoid_: Site, website, URL (when meaning the document itself)
 
 **Metric**:
-A single fact about the Page, such as the length of its meta title or its number of images.
+A single fact about the Page, such as the length of its meta title or its number of links.
 _Avoid_: Indicator, parameter, field, stat
 
 **Group**:

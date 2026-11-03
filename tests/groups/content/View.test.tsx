@@ -9,7 +9,6 @@ const snap = (over: Partial<ContentSnapshot> = {}): ContentSnapshot =>
   snapshot({
     title: { count: 1, value: 'Hello' },
     words: 1488,
-    images: 12,
     headings: [1, 4, 0, 2, 0, 0],
     ...over,
   });
@@ -22,10 +21,10 @@ describe('View Content', () => {
     expect(screen.getByText('Hello')).toBeTruthy();
   });
 
-  it('плитки words/images/links з роздільниками тисяч', () => {
+  it('плитки words/links з роздільниками тисяч', () => {
     render(<View view={assess(snap())} />);
     expect(screen.getByTestId('tile-words').textContent).toBe('1,488words');
-    expect(screen.getByTestId('tile-images').textContent).toBe('12images');
+    expect(screen.queryByTestId('tile-images')).toBeNull();
     expect(screen.getByTestId('tile-links').textContent).toBe('0links');
   });
 

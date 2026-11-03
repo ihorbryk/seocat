@@ -1,8 +1,3 @@
-/** Усі <img>; inline svg, CSS-фони, input[type=image], favicon не рахуються. */
-export function extractImages(document: Document): number {
-  return document.querySelectorAll('img').length;
-}
-
 /** Усі <a> з атрибутом href, будь-яка схема, дублікати рахуються. */
 export function extractLinks(document: Document): number {
   return document.querySelectorAll('a[href]').length;

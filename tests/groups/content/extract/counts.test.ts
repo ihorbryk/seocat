@@ -47,22 +47,6 @@ describe('content extract: words', () => {
   });
 });
 
-describe('content extract: images', () => {
-  it('рахує всі <img>, у <picture> лише <img>', () => {
-    const d = doc(
-      `<img src="a.png"><picture><source srcset="b.webp"><img src="b.png"></picture><img>`,
-    );
-    expect(extract(d).images).toBe(3);
-  });
-  it('не рахує inline svg, CSS-фони, input type=image, favicon', () => {
-    const d = doc(
-      `<svg><image href="x.png"/></svg><div style="background:url(a.png)"></div><input type="image" src="b.png">`,
-      '<link rel="icon" href="f.ico">',
-    );
-    expect(extract(d).images).toBe(0);
-  });
-});
-
 describe('content extract: links', () => {
   it('рахує <a href> будь-якої схеми, включно з дублікатами', () => {
     const d = doc(

@@ -10,7 +10,6 @@ export function contentSnapshot(over: Partial<ContentSnapshot> = {}): ContentSna
     title: { count: 1, value: 'Hi' },
     description: { count: 0, value: null },
     words: 0,
-    images: 0,
     links: 0,
     headings: [0, 0, 0, 0, 0, 0],
     ...over,
