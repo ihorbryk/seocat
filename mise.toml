@@ -24,3 +24,13 @@ run = ["npx tsc --noEmit", "npx prettier --check ."]
 [tasks.fmt]
 description = "Відформатувати код Prettier-ом"
 run = "npx prettier --write ."
+
+[tasks."xcode:init"]
+description = "Один раз згенерувати Xcode-обгортку (xcode/), що посилається на dist/"
+run = "rm -rf xcode && xcrun safari-web-extension-packager --macos-only --swift --app-name seocat --bundle-identifier com.ihorbryk.seocat --project-location xcode --no-open --no-prompt --force dist"
+depends = ["build"]
+
+[tasks.xcode]
+description = "Зібрати застосунок із розширенням через xcodebuild (Sign to Run Locally)"
+run = "xcodebuild -project xcode/seocat/seocat.xcodeproj -scheme seocat -configuration Debug -derivedDataPath xcode/build CODE_SIGN_IDENTITY=- build"
+depends = ["build"]

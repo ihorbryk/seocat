@@ -14,6 +14,7 @@ describe('View seo-basics', () => {
           canonical: [],
           robots: [],
           hreflang: [],
+          description: { count: 0, value: null },
         })}
       />,
     );

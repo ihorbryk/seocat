@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { groups } from '../groups/registry';
 import type { Outcome } from '../shared/envelope';
 import { classify, type Attempt } from './classify';
+import { StateScreen } from './StateScreen';
 
 /** Шел попапа (без юніт-тестів): tabs.query -> executeScript -> classify -> assess -> рендер. */
 async function measure(): Promise<{ url?: string; outcome: Outcome }> {
@@ -28,9 +29,8 @@ export function App() {
 
   // Поки немає результату, нічого не малюємо (без спінера).
   if (!state) return null;
-  const { outcome } = state;
-  // Екрани стану (unreadable / not-html / failed) додає тікет #6.
-  if (outcome.kind !== 'ok') return null;
+  const { outcome, url } = state;
+  if (outcome.kind !== 'ok') return <StateScreen url={url} outcome={outcome} />;
 
   const group = groups[0]!;
   const View = group.View;

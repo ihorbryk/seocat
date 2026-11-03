@@ -9,6 +9,7 @@ function titleRow(title: PageSnapshot['title']) {
     canonical: [],
     robots: [],
     hreflang: [],
+    description: { count: 0, value: null },
   });
   const meta = view.sections.find((s) => s.id === 'meta');
   const row = meta?.rows.find((r) => r.id === 'title');
@@ -22,8 +23,14 @@ describe('assess: хедер', () => {
   it('переносить URL без змін', () => {
     const url = 'https://example.com/a?b=1#c';
     expect(
-      assess({ url, title: { count: 0, value: null }, canonical: [], robots: [], hreflang: [] })
-        .header.url,
+      assess({
+        url,
+        title: { count: 0, value: null },
+        description: { count: 0, value: null },
+        canonical: [],
+        robots: [],
+        hreflang: [],
+      }).header.url,
     ).toBe(url);
   });
 });

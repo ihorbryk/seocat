@@ -9,6 +9,7 @@ import type { HeaderView } from './assess/header';
 export interface PageSnapshot {
   url: string;
   title: TextTag;
+  description: TextTag;
   /** Абсолютні href кожного canonical; '' = Empty. */
   canonical: string[];
   robots: RobotsEntry[];

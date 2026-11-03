@@ -1,5 +1,6 @@
 import type { GroupView, PageSnapshot } from '../types';
 import { assessCanonical } from './canonical';
+import { assessDescription } from './description';
 import { assessHeader } from './header';
 import { assessHreflang } from './hreflang';
 import { assessRobots } from './robots';
@@ -13,7 +14,7 @@ export function assess(snapshot: PageSnapshot): GroupView {
       {
         id: 'meta',
         title: 'Meta',
-        rows: [assessTitle(snapshot)],
+        rows: [assessTitle(snapshot), assessDescription(snapshot)],
       },
       {
         id: 'indexing',

@@ -9,6 +9,7 @@ function row(id: string, patch: Partial<PageSnapshot>) {
   const snapshot: PageSnapshot = {
     url: 'https://example.com/',
     title: { count: 1, value: 'x' },
+    description: { count: 0, value: null },
     canonical: [],
     robots: [],
     hreflang: [],
@@ -25,6 +26,7 @@ describe('assess: секція Indexing', () => {
     const sections = assess({
       url: 'u',
       title: { count: 0, value: null },
+      description: { count: 0, value: null },
       canonical: [],
       robots: [],
       hreflang: [],

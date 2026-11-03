@@ -32,6 +32,7 @@ it('зібраний extract.js обчислюється в конверт ok', 
         canonical: [],
         robots: [],
         hreflang: [],
+        description: { count: 0, value: null },
       },
     },
   });

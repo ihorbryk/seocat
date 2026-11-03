@@ -56,6 +56,20 @@ describe('Row', () => {
   });
 });
 
+describe('Row: Length rating', () => {
+  it('бейдж `N chars · Good` текстом під назвою Description', () => {
+    const tr = renderRow({
+      id: 'description',
+      label: 'Description',
+      badges: [{ text: '120 chars · Good', tone: 'good' }],
+      values: [{ kind: 'text', text: 'Some description' }],
+    });
+    const header = within(tr).getByRole('rowheader');
+    expect(within(header).getByText('Description')).toBeTruthy();
+    expect(within(header).getByText('120 chars · Good')).toBeTruthy();
+  });
+});
+
 describe('Table', () => {
   it('малює рядок-розділювач секції і її рядки', () => {
     render(

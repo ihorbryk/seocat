@@ -16,6 +16,7 @@ describe('extract run', () => {
           canonical: [],
           robots: [],
           hreflang: [],
+          description: { count: 0, value: null },
         },
       },
     });
