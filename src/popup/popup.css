@@ -1,0 +1,55 @@
+@import 'tailwindcss';
+
+/* Компоненти беруть кольори лише із семантичних токенів нижче (bg-surface, text-good, ...),
+   не з сирих класів палітри. Палітра: прототип popup-layout, варіант D. */
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f4f6;
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
+  --color-line: #e3e3e8;
+  --color-good: #1a7f37;
+  --color-good-bg: #e6f4ea;
+  --color-warn: #9a5b00;
+  --color-warn-bg: #fff3d6;
+  --color-accent: #0a66d8;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+/* Темна тема: ті самі токени, інші значення (prefers-color-scheme). */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #1e1e20;
+    --color-surface-2: #2a2a2d;
+    --color-ink: #f2f2f4;
+    --color-muted: #a1a1a6;
+    --color-line: #3a3a3e;
+    --color-good: #5fd17f;
+    --color-good-bg: #173a22;
+    --color-warn: #ffc85a;
+    --color-warn-bg: #3d2f10;
+    --color-accent: #4c9bff;
+  }
+}
+
+/* Tailwind шукає класи також поза src/popup (root збірки). */
+@source '../';
+
+:root {
+  color-scheme: light dark;
+}
+
+/* Рамка попапа: 460px, висота за вмістом до 600px, далі прокручується весь попап. */
+html {
+  width: 460px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: 13px/1.35 var(--font-sans);
+}

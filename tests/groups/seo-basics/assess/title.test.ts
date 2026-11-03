@@ -1,0 +1,67 @@
+import { describe, expect, it } from 'vitest';
+import { assess } from '../../../../src/groups/seo-basics/assess';
+import type { PageSnapshot } from '../../../../src/groups/seo-basics/types';
+
+function titleRow(title: PageSnapshot['title']) {
+  const view = assess({ url: 'https://example.com/', title });
+  const meta = view.sections.find((s) => s.id === 'meta');
+  const row = meta?.rows.find((r) => r.id === 'title');
+  if (!row) throw new Error('рядок Title не знайдено');
+  return row;
+}
+
+const text = (n: number) => 'a'.repeat(n);
+
+describe('assess: хедер', () => {
+  it('переносить URL без змін', () => {
+    const url = 'https://example.com/a?b=1#c';
+    expect(assess({ url, title: { count: 0, value: null } }).header.url).toBe(url);
+  });
+});
+
+describe('assess: Title', () => {
+  it('Missing: бейдж без довжини і значень', () => {
+    const row = titleRow({ count: 0, value: null });
+    expect(row.label).toBe('Title');
+    expect(row.badges).toEqual([{ text: 'Missing', tone: 'warn' }]);
+    expect(row.values).toEqual([]);
+  });
+
+  it('Empty: бейдж без `0 chars · Short`', () => {
+    const row = titleRow({ count: 1, value: '' });
+    expect(row.badges).toEqual([{ text: 'Empty', tone: 'warn' }]);
+    expect(row.values).toEqual([]);
+  });
+
+  it('Good: значення і зелений бейдж довжини', () => {
+    const row = titleRow({ count: 1, value: text(57) });
+    expect(row.values).toEqual([{ kind: 'text', text: text(57) }]);
+    expect(row.badges).toEqual([{ text: '57 chars · Good', tone: 'good' }]);
+  });
+
+  it.each([
+    [29, 'Short', 'warn'],
+    [30, 'Good', 'good'],
+    [60, 'Good', 'good'],
+    [61, 'Long', 'warn'],
+  ] as const)('межа %i -> %s', (n, label, tone) => {
+    expect(titleRow({ count: 1, value: text(n) }).badges).toEqual([
+      { text: `${n} chars · ${label}`, tone },
+    ]);
+  });
+
+  it('довжина в графемах: емодзі і кирилиця', () => {
+    expect(titleRow({ count: 1, value: '👍🏽' + 'я'.repeat(29) }).badges[0]?.text).toBe(
+      '30 chars · Good',
+    );
+  });
+
+  it('Duplicate: ×N поряд з довжиною і рейтингом першого значення', () => {
+    const row = titleRow({ count: 3, value: text(40) });
+    expect(row.badges).toEqual([
+      { text: 'Duplicate ×3', tone: 'warn' },
+      { text: '40 chars · Good', tone: 'good' },
+    ]);
+    expect(row.values).toEqual([{ kind: 'text', text: text(40) }]);
+  });
+});

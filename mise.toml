@@ -1,0 +1,26 @@
+[tools]
+node = "26"
+
+[tasks.setup]
+description = "Встановити залежності (npm ci)"
+run = "npm ci"
+
+[tasks.build]
+description = "Зібрати розширення в dist/ (попап + extract.js)"
+run = ["rm -rf dist", "npx vite build", "npx vite build --mode extract"]
+
+[tasks.dev]
+description = "Перезбирати dist/ при змінах"
+run = "rm -rf dist && { npx vite build --watch & npx vite build --mode extract --watch & wait; }"
+
+[tasks.test]
+description = "Запустити Vitest"
+run = "npx vitest run"
+
+[tasks.check]
+description = "tsc --noEmit і перевірка Prettier"
+run = ["npx tsc --noEmit", "npx prettier --check ."]
+
+[tasks.fmt]
+description = "Відформатувати код Prettier-ом"
+run = "npx prettier --write ."

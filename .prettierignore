@@ -1,0 +1,9 @@
+dist
+node_modules
+.scratch
+.claude
+docs
+xcode
+package-lock.json
+*.md
+tests/fixtures
