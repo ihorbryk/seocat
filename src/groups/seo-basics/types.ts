@@ -9,6 +9,11 @@ import type { HeaderView } from './assess/header';
 export interface PageSnapshot {
   url: string;
   title: TextTag;
+  words: number;
+  images: number;
+  links: number;
+  /** Лічильники H1..H6 (індекс 0 = H1). */
+  headings: number[];
 }
 
 /** Готове до показу: хедер + секції таблиці. */

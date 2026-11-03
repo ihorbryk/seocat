@@ -29,6 +29,10 @@ it('зібраний extract.js обчислюється в конверт ok', 
       'seo-basics': {
         url: 'https://example.com/x?y=1#z',
         title: { count: 1, value: 'Built' },
+        words: 0,
+        images: 0,
+        links: 0,
+        headings: [0, 0, 0, 0, 0, 0],
       },
     },
   });

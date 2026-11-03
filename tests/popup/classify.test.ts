@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { classify } from '../../src/popup/classify';
 import type { Envelope } from '../../src/shared/envelope';
+import { snapshot } from '../snapshot';
 
 const okEnvelope: Envelope = {
   kind: 'ok',
-  groups: { 'seo-basics': { url: 'https://example.com/', title: { count: 1, value: 'Hi' } } },
+  groups: { 'seo-basics': snapshot() },
 };
 
 describe('classify', () => {

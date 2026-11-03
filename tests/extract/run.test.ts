@@ -9,7 +9,12 @@ describe('extract run', () => {
     const envelope = run(doc);
     expect(envelope).toEqual({
       kind: 'ok',
-      groups: { 'seo-basics': { url: doc.URL, title: { count: 1, value: 'Hello world' } } },
+      groups: {
+        'seo-basics': expect.objectContaining({
+          url: doc.URL,
+          title: { count: 1, value: 'Hello world' },
+        }),
+      },
     });
   });
 
