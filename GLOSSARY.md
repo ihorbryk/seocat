@@ -13,8 +13,8 @@ A single fact about the Page, such as the length of its meta title or its number
 _Avoid_: Indicator, parameter, field, stat
 
 **Group**:
-A named set of Metrics shown together. Version 1 has exactly one Group.
-_Avoid_: Section, tab, category, data block
+A named set of Metrics shown together on its own tab of the popup. There are two Groups: **Content** (what the Page says, such as its meta title and description) and **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang).
+_Avoid_: Section, category, data block
 
 **Missing**:
 The state of a Metric whose source tag is absent from the Page.

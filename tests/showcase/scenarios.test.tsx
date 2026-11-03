@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/preact';
 import { describe, expect, it } from 'vitest';
 import { scenarios } from '../../dev/showcase/scenarios';
+import { groups } from '../../src/groups/registry';
 import { Popup } from '../../src/popup/Popup';
 
 describe('сценарії showcase', () => {
@@ -9,10 +10,12 @@ describe('сценарії showcase', () => {
     expect([...kinds].sort()).toEqual(['failed', 'not-html', 'ok', 'unreadable']);
   });
 
-  it.each(scenarios.filter((s) => s.outcome.kind === 'ok'))(
-    '$id: Popup малює таблицю Group',
-    ({ url, outcome }) => {
-      render(<Popup url={url} outcome={outcome} />);
+  const okScenarios = scenarios.filter((s) => s.outcome.kind === 'ok');
+  it.each(okScenarios.flatMap((s) => groups.map((g) => ({ ...s, tab: g.id }))))(
+    '$id, вкладка $tab: Popup малює таблицю Group',
+    ({ url, outcome, tab }) => {
+      render(<Popup url={url} outcome={outcome} initialTab={tab} />);
+      expect(screen.getByRole('tab', { selected: true }).id).toBe(`tab-${tab}`);
       expect(screen.getByRole('table')).toBeTruthy();
     },
   );

@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { classify } from '../../src/popup/classify';
 import type { Envelope } from '../../src/shared/envelope';
-import { snapshot } from '../snapshot';
+import { okOutcome } from '../snapshot';
 
-const okEnvelope: Envelope = {
-  kind: 'ok',
-  groups: { 'seo-basics': snapshot() },
-};
+const okEnvelope: Envelope = okOutcome();
 
 describe('classify', () => {
   it('ok проходить без змін', () => {

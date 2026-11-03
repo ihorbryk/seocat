@@ -4,20 +4,20 @@
 
 ## Межі шарів
 
-- `PageSnapshot` — сирі дані з DOM: значення тегів, лічильники, усі записи. Стани Missing / Empty / Duplicate, довжина і Length rating виводяться лише в `assess`.
-- `PageSnapshot` і `GroupView` нічого не знають про Unreadable, Not HTML і Failed; ці стани живуть над шаром Group (ADR 0002).
+- Знімок Group (`ContentSnapshot`, `IndexingSnapshot`) — сирі дані з DOM: значення тегів, лічильники, усі записи. Стани Missing / Empty / Duplicate, довжина і Length rating виводяться лише в `assess`.
+- Знімки і view Groups нічого не знають про Unreadable, Not HTML і Failed; ці стани живуть над шаром Group (ADR 0002).
 - `extract` читає лише DOM документа верхнього рівня, без `innerText` і перевірок видимості (ADR 0003). Будь-яке нове правило Metric або відповідає ADR 0003, або змінює ADR разом із кодом.
 - `assess` і компоненти не торкаються DOM Page і `browser.*`; з браузером працює лише шел попапа (`src/popup/App.tsx`).
 
 ## Метрики
 
 - Metric рахує лише те, що є в розмітці: без підставлених значень за замовчуванням (неявне `index, follow`), без валідації і без порівнянь, яких немає в спеці.
-- Missing, Empty і Duplicate мають однакову семантику для всіх Metrics, як у `GLOSSARY.md`; новий бейдж береться з `assess/badges.ts`, а не будується вдруге.
+- Missing, Empty і Duplicate мають однакову семантику для всіх Metrics, як у `GLOSSARY.md`; новий бейдж береться з `src/shared/badges.ts`, а не будується вдруге.
 
 ## Тести
 
-- Тест перевіряє поведінку через публічний інтерфейс модуля: `extract(document)`, `assess(snapshot)`, `classify(...)`, хелпери `src/shared/`, відрендерений текст компонента.
-- `extract` перевіряється на HTML-фікстурах, `assess` — на `snapshot()` з `tests/snapshot.ts`, а не на літералах `PageSnapshot`.
+- Тест перевіряє поведінку через публічний інтерфейс модуля: `extract(document)`, `assess(snapshot)`, `classify(...)`, `Popup` з пропсами, хелпери `src/shared/`, відрендерений текст компонента.
+- `extract` перевіряється на HTML-фікстурах, `assess` — на `contentSnapshot()` / `indexingSnapshot()` з `tests/snapshot.ts`, а не на літералах знімків.
 - Кожне правило Metric з ADR 0003 і кожна межа Length rating має тест на граничному значенні.
 
 ## Мова і назви

@@ -1,19 +1,28 @@
 import { render } from 'preact';
+import { groups } from '../../src/groups/registry';
 import { Popup } from '../../src/popup/Popup';
 import '../../src/popup/popup.css';
 import { scenarios } from './scenarios';
 
 /**
- * Showcase: `?scenario=<id>` малює рівно один попап через `Popup`, без параметра — список сценаріїв.
+ * Showcase: `?scenario=<id>[&tab=<group id>]` малює рівно один попап через `Popup`, без параметра — список
+ * сценаріїв. Початкова вкладка береться лише з `tab` (не з `localStorage`), щоб стан не перетікав між сценаріями.
  * Тема — через емуляцію prefers-color-scheme (DevTools), як у Safari.
  */
 function Showcase() {
-  const id = new URLSearchParams(location.search).get('scenario');
+  const params = new URLSearchParams(location.search);
+  const id = params.get('scenario');
   if (id === null) return <Index />;
   const scenario = scenarios.find((s) => s.id === id);
   if (!scenario) return <Index unknown={id} />;
   document.title = `seocat · ${scenario.id}`;
-  return <Popup url={scenario.url} outcome={scenario.outcome} />;
+  return (
+    <Popup
+      url={scenario.url}
+      outcome={scenario.outcome}
+      initialTab={params.get('tab') ?? undefined}
+    />
+  );
 }
 
 function Index({ unknown }: { unknown?: string }) {
@@ -30,7 +39,16 @@ function Index({ unknown }: { unknown?: string }) {
           <li key={s.id}>
             <a class="text-accent" href={`?scenario=${s.id}`}>
               {s.id}
-            </a>{' '}
+            </a>
+            {s.outcome.kind === 'ok' &&
+              groups.slice(1).map((g) => (
+                <>
+                  {' '}
+                  <a key={g.id} class="text-accent" href={`?scenario=${s.id}&tab=${g.id}`}>
+                    ({g.id})
+                  </a>
+                </>
+              ))}{' '}
             <span class="text-muted">· {s.note}</span>
           </li>
         ))}

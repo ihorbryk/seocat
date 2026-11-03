@@ -26,18 +26,15 @@ it('зібраний extract.js обчислюється в конверт ok', 
   expect(JSON.parse(JSON.stringify(result))).toEqual({
     kind: 'ok',
     groups: {
-      'seo-basics': {
-        url: 'https://example.com/x?y=1#z',
+      content: {
         title: { count: 1, value: 'Built' },
-        canonical: [],
-        robots: [],
-        hreflang: [],
         description: { count: 0, value: null },
         words: 0,
         images: 0,
         links: 0,
         headings: [0, 0, 0, 0, 0, 0],
       },
+      indexing: { canonical: [], robots: [], hreflang: [] },
     },
   });
 }, 30_000);

@@ -1,8 +1,10 @@
-import type { PageSnapshot } from '../groups/seo-basics/types';
+import type { ContentSnapshot } from '../groups/content/types';
+import type { IndexingSnapshot } from '../groups/indexing/types';
 
 /** Знімки всіх Groups з реєстру за id. Нова Group додає сюди один ключ. */
 export interface GroupSnapshots {
-  'seo-basics': PageSnapshot;
+  content: ContentSnapshot;
+  indexing: IndexingSnapshot;
 }
 
 /** Що повертає `extract.js` (JSON-серіалізовне). */

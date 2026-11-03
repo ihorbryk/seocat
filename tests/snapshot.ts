@@ -1,13 +1,11 @@
-import type { PageSnapshot } from '../src/groups/seo-basics/types';
+import type { ContentSnapshot } from '../src/groups/content/types';
+import type { IndexingSnapshot } from '../src/groups/indexing/types';
+import type { GroupSnapshots, Outcome } from '../src/shared/envelope';
 
-/** Знімок з нульовими лічильниками; тести перекривають лише потрібні поля. */
-export function snapshot(over: Partial<PageSnapshot> = {}): PageSnapshot {
+/** Знімок Group Content з нульовими лічильниками; тести перекривають лише потрібні поля. */
+export function contentSnapshot(over: Partial<ContentSnapshot> = {}): ContentSnapshot {
   return {
-    url: 'https://example.com/',
     title: { count: 1, value: 'Hi' },
-    canonical: [],
-    robots: [],
-    hreflang: [],
     description: { count: 0, value: null },
     words: 0,
     images: 0,
@@ -15,4 +13,20 @@ export function snapshot(over: Partial<PageSnapshot> = {}): PageSnapshot {
     headings: [0, 0, 0, 0, 0, 0],
     ...over,
   };
+}
+
+/** Знімок Group Indexing без тегів; тести перекривають лише потрібні поля. */
+export function indexingSnapshot(over: Partial<IndexingSnapshot> = {}): IndexingSnapshot {
+  return { canonical: [], robots: [], hreflang: [], ...over };
+}
+
+/** Outcome `ok` зі знімками обох Groups. */
+export function okOutcome(
+  over: { content?: Partial<ContentSnapshot>; indexing?: Partial<IndexingSnapshot> } = {},
+): Extract<Outcome, { kind: 'ok' }> {
+  const groups: GroupSnapshots = {
+    content: contentSnapshot(over.content),
+    indexing: indexingSnapshot(over.indexing),
+  };
+  return { kind: 'ok', groups };
 }

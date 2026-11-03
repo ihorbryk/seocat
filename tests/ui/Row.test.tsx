@@ -71,24 +71,6 @@ describe('Row: Length rating', () => {
 });
 
 describe('Table', () => {
-  it('малює рядок-розділювач секції і її рядки', () => {
-    render(
-      <Table
-        sections={[
-          {
-            id: 'meta',
-            title: 'Meta',
-            rows: [
-              { id: 'title', label: 'Title', badges: [], values: [{ kind: 'text', text: 'Hi' }] },
-            ],
-          },
-        ]}
-      />,
-    );
-    expect(screen.getByText('Meta')).toBeTruthy();
-    expect(screen.getByText('Hi')).toBeTruthy();
-  });
-
   it('count показано в лівій колонці, а Empty-запис має текстовий префікс перед бейджем', () => {
     const tr = renderRow({
       id: 'hreflang',

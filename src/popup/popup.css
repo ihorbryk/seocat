@@ -13,6 +13,8 @@
   --color-warn: #9a5b00;
   --color-warn-bg: #fff3d6;
   --color-accent: #0a66d8;
+  /* Активний сегмент перемикача вкладок (світліший за доріжку `line`, як у macOS). */
+  --color-raised: #ffffff;
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 }
@@ -30,6 +32,7 @@
     --color-warn: #ffc85a;
     --color-warn-bg: #3d2f10;
     --color-accent: #4c9bff;
+    --color-raised: #636366;
   }
 }
 

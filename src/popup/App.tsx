@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Outcome } from '../shared/envelope';
 import { classify, type Attempt } from './classify';
+import { readLastTab, writeLastTab } from './last-tab';
 import { Popup } from './Popup';
 
 /** Шел попапа: tabs.query -> executeScript -> classify, далі рендер через `Popup`. */
@@ -35,5 +36,21 @@ export function App() {
 
   // Поки немає результату, нічого не малюємо (без спінера).
   if (!state) return null;
-  return <Popup url={state.url} outcome={state.outcome} />;
+  return (
+    <Popup
+      url={state.url}
+      outcome={state.outcome}
+      initialTab={readLastTab(storage())}
+      onTabChange={(id) => writeLastTab(storage(), id)}
+    />
+  );
+}
+
+/** `localStorage` попапа; сам доступ до нього може кинути виняток (заблоковані дані сайту). */
+function storage(): Storage | undefined {
+  try {
+    return globalThis.localStorage;
+  } catch {
+    return undefined;
+  }
 }

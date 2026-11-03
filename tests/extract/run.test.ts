@@ -4,16 +4,13 @@ import { run } from '../../src/extract/run';
 import { loadFixture } from '../helpers';
 
 describe('extract run', () => {
-  it('HTML-сторінка: конверт ok зі знімком seo-basics', () => {
-    const doc = loadFixture('title-normal');
-    const envelope = run(doc);
+  it('HTML-сторінка: конверт ok зі знімками Content і Indexing', () => {
+    const envelope = run(loadFixture('canonical-relative'));
     expect(envelope).toEqual({
       kind: 'ok',
       groups: {
-        'seo-basics': expect.objectContaining({
-          url: doc.URL,
-          title: { count: 1, value: 'Hello world' },
-        }),
+        content: expect.objectContaining({ title: expect.any(Object) }),
+        indexing: expect.objectContaining({ canonical: ['https://example.com/page?x=1'] }),
       },
     });
   });
@@ -28,7 +25,7 @@ describe('extract run', () => {
     // jsdom не вміє створювати не-HTML документи, тому підміняємо contentType.
     const doc = loadFixture('title-normal');
     Object.defineProperty(doc, 'contentType', { value: 'application/json' });
-    const envelope = run(doc, [{ id: 'seo-basics', extract: extractGroup }]);
+    const envelope = run(doc, [{ id: 'content', extract: extractGroup }]);
     expect(envelope).toEqual({ kind: 'not-html', contentType: 'application/json' });
     expect(extractGroup).not.toHaveBeenCalled();
   });
@@ -44,7 +41,7 @@ describe('extract run', () => {
     const doc = loadFixture('title-normal');
     const envelope = run(doc, [
       {
-        id: 'seo-basics',
+        id: 'content',
         extract: () => {
           throw new Error('boom');
         },

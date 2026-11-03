@@ -30,7 +30,7 @@ export interface RowView {
 
 export interface SectionView {
   id: string;
-  /** Рядок-розділювач у верхньому регістрі (Meta, Indexing). */
+  /** Рядок-розділювач у верхньому регістрі (показується, коли секцій у Group більше однієї). */
   title: string;
   rows: RowView[];
 }
