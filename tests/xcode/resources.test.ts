@@ -19,7 +19,7 @@ it('Xcode-проєкт містить у ресурсах усе, на що по
   const manifest = JSON.parse(readFileSync(join(repo, 'public/manifest.json'), 'utf8'));
   const needed = [
     'manifest.json',
-    'extract.js', // інжектується через scripting.executeScript у src/popup/App.tsx
+    'extract.js', // інжектується через scripting.executeScript у src/popup/browser-port.ts
     manifest.action.default_popup,
     ...Object.values<string>(manifest.action.default_icon),
     ...Object.values<string>(manifest.icons),

@@ -4,13 +4,13 @@
 
 ## Шари
 
-Дані проходять шлях `extract → envelope → classify → assess → View`:
+Дані проходять шлях `extract → envelope → measure → assess → View`:
 
 - `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`). Імпорти дозволені, бо все збирається в один `extract.js`.
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає половини Page з `src/groups/page-registry.ts` у `try/catch`, повертаючи конверт (`src/extract/envelope.ts`).
-- `src/popup/classify.ts`: результат `executeScript` або виняток перетворює на `Outcome`; Unreadable визначає лише попап (ADR 0002).
+- `src/popup/measure.ts`: `measure(port)` бере активну вкладку і результат `executeScript` через `TabPort` і повертає URL та `Outcome`; Unreadable визначає лише він (ADR 0002). Адаптер над `browser.*` — `src/popup/browser-port.ts`, у тестах — фейк.
 - `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
-- `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за `src/groups/popup-registry.tsx`, панель — `GroupPanel`), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
+- `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за `src/groups/popup-registry.tsx`, панель — `GroupPanel`), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (`measure(browserPort)`, остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
 - `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента.
 
 ## Додати Metric

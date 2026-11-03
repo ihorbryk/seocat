@@ -7,7 +7,7 @@
 - Знімок Group (`ContentSnapshot`, `IndexingSnapshot`) — сирі дані з DOM: значення тегів, лічильники, усі записи. Стани Missing / Empty / Duplicate, довжина і Length rating виводяться лише в `assess`.
 - Знімки і view Groups нічого не знають про Unreadable, Not HTML і Failed; ці стани живуть над шаром Group (ADR 0002).
 - `extract` читає лише DOM документа верхнього рівня, без `innerText` і перевірок видимості (ADR 0003). Будь-яке нове правило Metric або відповідає ADR 0003, або змінює ADR разом із кодом.
-- `assess` і компоненти не торкаються DOM Page і `browser.*`; з браузером працює лише шел попапа (`src/popup/App.tsx`).
+- `assess` і компоненти не торкаються DOM Page і `browser.*`; з браузером працює лише адаптер `src/popup/browser-port.ts`, а логіка вимірювання вкладки живе в `measure` (`src/popup/measure.ts`) і тестується через фейковий `TabPort`.
 
 ## Метрики
 
@@ -16,7 +16,7 @@
 
 ## Тести
 
-- Тест перевіряє поведінку через публічний інтерфейс модуля: `extract(document)`, `assess(snapshot)`, `classify(...)`, `Popup` з пропсами, хелпери `src/shared/`, відрендерений текст компонента.
+- Тест перевіряє поведінку через публічний інтерфейс модуля: `extract(document)`, `assess(snapshot)`, `measure(port)`, `Popup` з пропсами, хелпери `src/shared/`, відрендерений текст компонента.
 - `extract` перевіряється на HTML-фікстурах, `assess` — на `contentSnapshot()` / `indexingSnapshot()` з `tests/snapshot.ts`, а не на літералах знімків.
 - Кожне правило Metric з ADR 0003 і кожна межа Length rating має тест на граничному значенні.
 
