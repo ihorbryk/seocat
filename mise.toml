@@ -21,6 +21,10 @@ run = "npx vitest run"
 description = "tsc --noEmit і перевірка Prettier"
 run = ["npx tsc --noEmit", "npx prettier --check ."]
 
+[tasks.icons]
+description = "Згенерувати PNG-іконки з assets/icons/*.svg (вручну при зміні SVG)"
+run = "node scripts/icons.ts"
+
 [tasks.fmt]
 description = "Відформатувати код Prettier-ом"
 run = "npx prettier --write ."

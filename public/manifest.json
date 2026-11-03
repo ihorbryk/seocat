@@ -5,6 +5,20 @@
   "description": "Shows SEO facts about the current page.",
   "permissions": ["activeTab", "scripting"],
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icons/toolbar-16.png",
+      "19": "icons/toolbar-19.png",
+      "32": "icons/toolbar-32.png",
+      "38": "icons/toolbar-38.png"
+    }
+  },
+  "icons": {
+    "48": "icons/app-48.png",
+    "64": "icons/app-64.png",
+    "96": "icons/app-96.png",
+    "128": "icons/app-128.png",
+    "256": "icons/app-256.png",
+    "512": "icons/app-512.png"
   }
 }

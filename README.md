@@ -10,6 +10,7 @@ mise run dev     # перезбирає dist/ при змінах
 mise run test    # Vitest + jsdom
 mise run check   # tsc --noEmit + Prettier --check
 mise run fmt     # Prettier --write
+mise run icons   # PNG-іконки з assets/icons/*.svg (вручну при зміні SVG; результат комітиться)
 ```
 
 Завантаження в Safari для розробки: Develop › Add Temporary Extension… і тека `dist/`.
