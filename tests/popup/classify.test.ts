@@ -4,7 +4,13 @@ import type { Envelope } from '../../src/shared/envelope';
 
 const okEnvelope: Envelope = {
   kind: 'ok',
-  groups: { 'seo-basics': { url: 'https://example.com/', title: { count: 1, value: 'Hi' } } },
+  groups: {
+    'seo-basics': {
+      url: 'https://example.com/',
+      title: { count: 1, value: 'Hi' },
+      description: { count: 0, value: null },
+    },
+  },
 };
 
 describe('classify', () => {
