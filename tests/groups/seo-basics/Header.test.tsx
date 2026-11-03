@@ -7,6 +7,7 @@ import type { PageSnapshot } from '../../../src/groups/seo-basics/types';
 const snap = (over: Partial<PageSnapshot> = {}): PageSnapshot => ({
   url: 'https://example.com/a?b=1&c=2#frag',
   title: { count: 1, value: 'Hello' },
+  description: { count: 0, value: null },
   words: 1488,
   images: 12,
   links: 0,

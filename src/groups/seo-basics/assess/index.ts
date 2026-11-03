@@ -1,4 +1,5 @@
 import type { GroupView, PageSnapshot } from '../types';
+import { assessDescription } from './description';
 import { assessHeader } from './header';
 import { assessTitle } from './title';
 
@@ -10,7 +11,7 @@ export function assess(snapshot: PageSnapshot): GroupView {
       {
         id: 'meta',
         title: 'Meta',
-        rows: [assessTitle(snapshot)],
+        rows: [assessTitle(snapshot), assessDescription(snapshot)],
       },
     ],
   };

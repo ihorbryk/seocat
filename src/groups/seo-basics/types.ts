@@ -9,6 +9,7 @@ import type { HeaderView } from './assess/header';
 export interface PageSnapshot {
   url: string;
   title: TextTag;
+  description: TextTag;
   words: number;
   images: number;
   links: number;
