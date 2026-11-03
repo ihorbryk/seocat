@@ -1,4 +1,5 @@
-import { toGroupId, type GroupId } from '../groups/registry';
+import type { GroupId } from '../groups/page-registry';
+import { toGroupId } from '../groups/popup-registry';
 
 const KEY = 'seocat:last-tab';
 

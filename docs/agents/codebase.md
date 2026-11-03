@@ -1,16 +1,16 @@
 # Як влаштовано код seocat
 
-Терміни (Page, Metric, Group, Missing, Empty, Duplicate, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003.
+Терміни (Page, Metric, Group, Missing, Empty, Duplicate, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003, поділ Group на дві половини — в ADR 0004.
 
 ## Шари
 
 Дані проходять шлях `extract → envelope → classify → assess → View`:
 
 - `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`). Імпорти дозволені, бо все збирається в один `extract.js`.
-- `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає Groups у `try/catch`, повертаючи конверт (`src/shared/envelope.ts`).
+- `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає половини Page з `src/groups/page-registry.ts` у `try/catch`, повертаючи конверт (`src/extract/envelope.ts`).
 - `src/popup/classify.ts`: результат `executeScript` або виняток перетворює на `Outcome`; Unreadable визначає лише попап (ADR 0002).
 - `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
-- `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за реєстром), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
+- `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за `src/groups/popup-registry.tsx`, панель — `GroupPanel`), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
 - `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента.
 
 ## Додати Metric
@@ -25,7 +25,13 @@
 
 ## Додати Group
 
-Тека `src/groups/<id>/` з тими самими шарами, експорт `{ id, label, extract, assess, View }` у `index.ts`, запис у `src/groups/registry.ts` (порядок = порядок вкладок, перша — вкладка за замовчуванням) і ключ у `GroupSnapshots` (`src/shared/envelope.ts`). Нова Group автоматично стає вкладкою; її `label` — назва вкладки в UI. Перейменування id скидає збережену вкладку на першу.
+Тека `src/groups/<id>/` з тими самими шарами і двома входами (ADR 0004):
+
+- `page.ts` → `{ id, extract }`, рядок у `src/groups/page-registry.ts`. Звідси виводяться `GroupId` і `GroupSnapshots`.
+- `popup.tsx` → `{ id, label, Panel }`, де `Panel({ snapshot })` викликає `assess` і малює `View`; рядок у `src/groups/popup-registry.tsx` (порядок = порядок вкладок, перша — вкладка за замовчуванням).
+- Фабрика знімка в `tests/snapshot.ts` і запис у `factories`.
+
+Пропущена половина попапа або фабрика ламає `tsc`. Нова Group автоматично стає вкладкою; її `label` — назва вкладки в UI. Перейменування id скидає збережену вкладку на першу.
 
 ## Showcase
 
@@ -45,6 +51,7 @@
 
 ## Пастки
 
+- **Імпорт у `page.ts`.** Усе, що імпортує `page.ts` Group, інжектується в кожну Page. `assess`, `View`, `src/ui/` і preact туди не потрапляють; `tests/extract/build.test.ts` перевіряє склад бандла.
 - **Останній вираз `extract.js`.** `executeScript({ files })` повертає значення останнього виразу скрипта. Rollup загортає IIFE у `var … =`, і плагін у `vite.config.ts` це присвоєння прибирає. `tests/extract/build.test.ts` збирає справжній бандл і охороняє контракт.
 - **Два проходи збірки.** `vite build` (попап) і `vite build --mode extract` пишуть в один `dist/` і не очищають його; очищає задача mise. Запуск `vite build` напряму залишить застарілі файли.
 - **`mise run xcode:init` перезаписує закомічений Xcode-проєкт.** Packager генерує нові id і власні імена іконок (`mac-icon-*.png`), які розходяться з `mise run icons`. Потрібен лише при зміні структури `dist/`; новий файл у `dist/` додається рядком у ресурси `xcode/seocat/seocat.xcodeproj/project.xcproj`, а `tests/xcode/resources.test.ts` перевіряє, що нічого не пропущено.

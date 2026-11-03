@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { Outcome } from '../shared/envelope';
+import type { Outcome } from '../extract/envelope';
 import { classify, type Attempt } from './classify';
 import { readLastTab, writeLastTab } from './last-tab';
 import { Popup } from './Popup';

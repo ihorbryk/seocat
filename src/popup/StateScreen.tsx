@@ -1,4 +1,4 @@
-import type { Outcome } from '../shared/envelope';
+import type { Outcome } from '../extract/envelope';
 
 type StateOutcome = Exclude<Outcome, { kind: 'ok' }>;
 

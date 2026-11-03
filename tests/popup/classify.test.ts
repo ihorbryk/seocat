@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { classify } from '../../src/popup/classify';
-import type { Envelope } from '../../src/shared/envelope';
+import type { Envelope } from '../../src/extract/envelope';
 import { okOutcome } from '../snapshot';
 
 const okEnvelope: Envelope = okOutcome();

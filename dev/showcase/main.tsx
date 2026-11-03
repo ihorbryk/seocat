@@ -1,5 +1,5 @@
 import { render } from 'preact';
-import { groups } from '../../src/groups/registry';
+import { popupGroups } from '../../src/groups/popup-registry';
 import { Popup } from '../../src/popup/Popup';
 import '../../src/popup/popup.css';
 import { scenarios } from './scenarios';
@@ -41,7 +41,7 @@ function Index({ unknown }: { unknown?: string }) {
               {s.id}
             </a>
             {s.outcome.kind === 'ok' &&
-              groups.slice(1).map((g) => (
+              popupGroups.slice(1).map((g) => (
                 <>
                   {' '}
                   <a key={g.id} class="text-accent" href={`?scenario=${s.id}&tab=${g.id}`}>

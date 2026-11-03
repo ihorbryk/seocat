@@ -1,4 +1,4 @@
-import type { Outcome } from '../../src/shared/envelope';
+import type { Outcome } from '../../src/extract/envelope';
 import { okOutcome } from '../../tests/snapshot';
 
 /** Стан попапа для showcase: `?scenario=<id>`. Дані — з `.scratch/seocat-v1/prototypes/popup-layout-PROTOTYPE.html` (варіант D). */

@@ -1,8 +1,8 @@
-import type { JSX } from 'preact';
 import { useState } from 'preact/hooks';
 import { version } from '../../public/manifest.json';
-import { groups, toGroupId, type GroupId } from '../groups/registry';
-import type { GroupSnapshots, Outcome } from '../shared/envelope';
+import type { Outcome } from '../extract/envelope';
+import type { GroupId, GroupSnapshots } from '../groups/page-registry';
+import { GroupPanel, popupGroups, toGroupId } from '../groups/popup-registry';
 import { Tabs } from '../ui/Tabs';
 import { UrlBlock } from '../ui/UrlBlock';
 import { StateScreen } from './StateScreen';
@@ -56,16 +56,8 @@ function GroupTabs({
     onTabChange?.(id);
   };
   return (
-    <Tabs items={groups} active={active} onSelect={select}>
+    <Tabs items={popupGroups} active={active} onSelect={select}>
       <GroupPanel id={active} snapshots={snapshots} />
     </Tabs>
   );
-}
-
-/** Знімок, `assess` і `View` однієї Group пов'язані за id; TypeScript не виводить цей зв'язок для об'єднання. */
-function GroupPanel({ id, snapshots }: { id: GroupId; snapshots: GroupSnapshots }) {
-  const group = groups.find((g) => g.id === id)!;
-  const view = group.assess(snapshots[id] as never);
-  const View = group.View as (props: { view: typeof view }) => JSX.Element;
-  return <View view={view} />;
 }

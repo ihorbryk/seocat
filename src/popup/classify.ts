@@ -1,4 +1,4 @@
-import type { Envelope, Outcome } from '../shared/envelope';
+import type { Envelope, Outcome } from '../extract/envelope';
 
 /** Запис кадру з `scripting.executeScript` (потрібні нам поля). */
 export interface FrameResult {
