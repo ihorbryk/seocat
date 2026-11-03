@@ -2,7 +2,7 @@ import { countGraphemes } from '../../../shared/graphemes';
 import { rateLength, type LengthRange } from '../../../shared/length-rating';
 import type { BadgeView } from '../../../ui/types';
 import type { TextTag } from '../extract/text-tag';
-import { EMPTY, MISSING } from '../../../shared/badges';
+import { duplicate, EMPTY, MISSING } from '../../../shared/badges';
 
 const LABELS = { short: 'Short', good: 'Good', long: 'Long' } as const;
 
@@ -24,6 +24,6 @@ export function textTagBadges(tag: TextTag, range: LengthRange): BadgeView[] {
       tone: rating === 'good' ? 'good' : 'warn',
     });
   }
-  if (tag.count > 1) badges.push({ text: `Duplicate ×${tag.count}`, tone: 'warn' });
+  if (tag.count > 1) badges.push(duplicate(tag.count));
   return badges;
 }

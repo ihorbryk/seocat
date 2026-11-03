@@ -1,4 +1,4 @@
-import { EMPTY, MISSING } from '../../../shared/badges';
+import { duplicate, EMPTY, MISSING } from '../../../shared/badges';
 import type { RowView, ValueView } from '../../../ui/types';
 
 /** Запис списку: `prefix + value`, а для порожнього value (Empty) бейдж Empty з тим самим префіксом. */
@@ -22,7 +22,7 @@ export function listRow(
     return { id, label, badges: [MISSING], values };
   }
   if (duplicates && values.length > 1) {
-    return { id, label, badges: [{ text: `Duplicate ×${values.length}`, tone: 'warn' }], values };
+    return { id, label, badges: [duplicate(values.length)], values };
   }
   return { id, label, count: values.length, badges: [], values };
 }
