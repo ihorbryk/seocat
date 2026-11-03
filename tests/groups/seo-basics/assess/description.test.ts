@@ -7,6 +7,9 @@ function descRow(description: PageSnapshot['description']) {
     url: 'https://example.com/',
     title: { count: 0, value: null },
     description,
+    canonical: [],
+    robots: [],
+    hreflang: [],
   });
   const row = view.sections.find((s) => s.id === 'meta')?.rows.find((r) => r.id === 'description');
   if (!row) throw new Error('рядок Description не знайдено');
