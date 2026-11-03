@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import { groups } from '../groups/registry';
 import type { Outcome } from '../shared/envelope';
 import { classify, type Attempt } from './classify';
-import { StateScreen } from './StateScreen';
+import { Popup } from './Popup';
 
-/** Шел попапа (без юніт-тестів): tabs.query -> executeScript -> classify -> assess -> рендер. */
+/** Шел попапа: tabs.query -> executeScript -> classify, далі рендер через `Popup`. */
 async function measure(): Promise<{ url?: string; outcome: Outcome }> {
   let tab: Awaited<ReturnType<typeof browser.tabs.query>>[number] | undefined;
   try {
@@ -36,10 +35,5 @@ export function App() {
 
   // Поки немає результату, нічого не малюємо (без спінера).
   if (!state) return null;
-  const { outcome, url } = state;
-  if (outcome.kind !== 'ok') return <StateScreen url={url} outcome={outcome} />;
-
-  const group = groups[0]!;
-  const View = group.View;
-  return <View view={group.assess(outcome.groups[group.id])} />;
+  return <Popup url={state.url} outcome={state.outcome} />;
 }

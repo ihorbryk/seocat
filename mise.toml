@@ -13,6 +13,10 @@ run = ["rm -rf dist", "npx vite build", "npx vite build --mode extract"]
 description = "Перезбирати dist/ при змінах"
 run = "rm -rf dist && { npx vite build --watch & npx vite build --mode extract --watch & wait; }"
 
+[tasks.showcase]
+description = "Showcase попапа на сценаріях: http://localhost:5180/?scenario=<id> (лише dev-сервер)"
+run = "npx vite --mode showcase"
+
 [tasks.test]
 description = "Запустити Vitest"
 run = "npx vitest run"

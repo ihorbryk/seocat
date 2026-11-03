@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // Два проходи збірки в один dist/:
 //   `vite build`                 -> попап (index.html + ресурси)
 //   `vite build --mode extract`  -> extract.js (IIFE), обидва не очищають dist/ (це робить задача mise: rm -rf dist)
+// Окремо `vite --mode showcase` (mise run showcase) віддає dev/showcase/ лише з dev-сервера; у dist/ він не потрапляє.
 export default defineConfig(({ mode }) => {
   if (mode === 'extract') {
     return {
@@ -23,6 +24,13 @@ export default defineConfig(({ mode }) => {
         },
         rollupOptions: { output: { exports: 'default' as const } },
       },
+    };
+  }
+  if (mode === 'showcase') {
+    return {
+      root: resolve(import.meta.dirname, 'dev/showcase'),
+      plugins: [preact(), tailwindcss()],
+      server: { port: 5180, strictPort: true },
     };
   }
   return {

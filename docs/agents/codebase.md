@@ -10,6 +10,7 @@
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає Groups у `try/catch`, повертаючи конверт (`src/shared/envelope.ts`).
 - `src/popup/classify.ts`: результат `executeScript` або виняток перетворює на `Outcome`; Unreadable визначає лише попап (ADR 0002).
 - `src/groups/<group>/assess/`: чиста функція `PageSnapshot → GroupView` без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating.
+- `src/popup/Popup.tsx`: чистий вибір екрана за `Outcome` (таблиця Group або `StateScreen`). Його рендерять шел `App` і showcase.
 - `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `UrlBlock`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента.
 
 ## Додати Metric
@@ -26,6 +27,15 @@
 
 Тека `src/groups/<id>/` з тими самими шарами, запис у `src/groups/registry.ts` і ключ у `GroupSnapshots` (`src/shared/envelope.ts`). `src/popup/App.tsx` у v1 малює `groups[0]` без перемикача; друга Group потребує рішення про перемикач.
 
+## Showcase
+
+`mise run showcase` піднімає dev-сервер Vite на `http://localhost:5180`. `/?scenario=<id>` малює один попап через `Popup` без `browser.*`, а `/` показує список сценаріїв. Сценарії лежать у `dev/showcase/scenarios.ts`: `PageSnapshot` через `snapshot()` проходить справжній `assess`, і кожен не-ok `Outcome` має свій сценарій. Новий стан, який варто бачити, додається одним записом; `tests/showcase/scenarios.test.tsx` рендерить кожен. У `dist/` showcase не потрапляє, бо входи `vite build` фіксовані.
+
+Після зміни в `src/ui/`, `src/popup/` або `View`/`Header` якоїсь Group агент запускає showcase, відкриває зачеплені сценарії через chrome-devtools MCP і знімає їх у світлій і темній темі (`emulate` з `colorScheme`; `popup.css` перемикається лише через `prefers-color-scheme`).
+
+- **Перевіряється в Chrome:** структура і порядок елементів, набір і кольори бейджів, токени в обох темах, ширина 460px, перенесення довгих значень, екрани станів.
+- **Лишається для Safari (у звіт):** шрифт SF і метрики тексту, піксельні відступи, рамка і висота справжнього попапа (обмеження 600px у WebKit), поведінка на реальних сторінках.
+
 ## Конвенції
 
 - **Empty-sentinel.** Записи списків (canonical, robots, hreflang) зберігають Empty як `''`; `TextTag.value` — `null` для Missing і `''` для Empty.
@@ -38,4 +48,4 @@
 - **Останній вираз `extract.js`.** `executeScript({ files })` повертає значення останнього виразу скрипта. Rollup загортає IIFE у `var … =`, і плагін у `vite.config.ts` це присвоєння прибирає. `tests/extract/build.test.ts` збирає справжній бандл і охороняє контракт.
 - **Два проходи збірки.** `vite build` (попап) і `vite build --mode extract` пишуть в один `dist/` і не очищають його; очищає задача mise. Запуск `vite build` напряму залишить застарілі файли.
 - **`mise run xcode:init` перезаписує закомічений Xcode-проєкт.** Packager генерує нові id і власні імена іконок (`mac-icon-*.png`), які розходяться з `mise run icons`. Потрібен лише при зміні структури `dist/`; новий файл у `dist/` додається рядком у ресурси `xcode/seocat/seocat.xcodeproj/project.xcproj`, а `tests/xcode/resources.test.ts` перевіряє, що нічого не пропущено.
-- **Safari недоступний агентам.** Вигляд попапа, теми і поведінку на реальних сторінках перевіряє людина; перелічуй такі критерії у звіті.
+- **Safari недоступний агентам.** Вигляд дивись у showcase (розділ вище); людині лишаються лише критерії з «Лишається для Safari», перелічуй їх у звіті.

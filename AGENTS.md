@@ -14,6 +14,8 @@ Default canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `read
 
 Before adding a Metric or a Group, touching the build, or writing tests, read `docs/agents/codebase.md`. Review rules: `CODING_STANDARDS.md`.
 
+After changing `src/ui/`, `src/popup/` or a Group's `View`/`Header`, run `mise run showcase`, screenshot the affected scenarios in light and dark, and list only the Safari-only criteria in your report (see "Showcase" in `docs/agents/codebase.md`).
+
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
