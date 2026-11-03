@@ -3,7 +3,7 @@
 Map: [seocat v1](../map.md)
 Type: grilling
 Status: out of scope
-Blocked by: 08
+Blocked by: —
 
 ## Question
 
