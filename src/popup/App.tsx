@@ -6,19 +6,26 @@ import { StateScreen } from './StateScreen';
 
 /** Шел попапа (без юніт-тестів): tabs.query -> executeScript -> classify -> assess -> рендер. */
 async function measure(): Promise<{ url?: string; outcome: Outcome }> {
-  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  let tab: Awaited<ReturnType<typeof browser.tabs.query>>[number] | undefined;
+  try {
+    [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  } catch {
+    return { outcome: { kind: 'unreadable' } };
+  }
+  if (tab?.id === undefined) return { url: tab?.url, outcome: { kind: 'unreadable' } };
+
   let attempt: Attempt;
   try {
     attempt = {
       results: await browser.scripting.executeScript({
-        target: { tabId: tab!.id! },
+        target: { tabId: tab.id },
         files: ['extract.js'],
       }),
     };
   } catch (thrown) {
     attempt = { thrown };
   }
-  return { url: tab?.url, outcome: classify(attempt) };
+  return { url: tab.url, outcome: classify(attempt) };
 }
 
 export function App() {
