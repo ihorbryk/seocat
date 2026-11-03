@@ -40,7 +40,9 @@ describe('seo-basics extract: robots', () => {
     ]);
   });
   it('name з пробілами навколо не збігається (без обрізання)', () => {
-    const d = parseHtml('<meta name=" robots " content="noindex"><meta name="robots " content="x">');
+    const d = parseHtml(
+      '<meta name=" robots " content="noindex"><meta name="robots " content="x">',
+    );
     expect(extract(d).robots).toEqual([]);
   });
   it('тегів немає: порожній список', () => {

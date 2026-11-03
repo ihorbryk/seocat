@@ -1,6 +1,5 @@
-import type { BadgeView, RowView, ValueView } from '../../../ui/types';
-
-const EMPTY: BadgeView = { text: 'Empty', tone: 'warn' };
+import { EMPTY, MISSING } from './badges';
+import type { RowView, ValueView } from '../../../ui/types';
 
 /** Запис списку: `prefix + value`, а для порожнього value (Empty) бейдж Empty з тим самим префіксом. */
 export function listValue(prefix: string, value: string): ValueView {
@@ -20,7 +19,7 @@ export function listRow(
   { duplicates = false }: { duplicates?: boolean } = {},
 ): RowView {
   if (values.length === 0) {
-    return { id, label, badges: [{ text: 'Missing', tone: 'warn' }], values };
+    return { id, label, badges: [MISSING], values };
   }
   if (duplicates && values.length > 1) {
     return { id, label, badges: [{ text: `Duplicate ×${values.length}`, tone: 'warn' }], values };

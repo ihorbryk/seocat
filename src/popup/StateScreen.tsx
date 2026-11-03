@@ -1,4 +1,5 @@
 import type { Outcome } from '../shared/envelope';
+import { UrlBlock } from '../ui/UrlBlock';
 
 type StateOutcome = Exclude<Outcome, { kind: 'ok' }>;
 
@@ -8,9 +9,7 @@ export function StateScreen({ url, outcome }: { url?: string; outcome: StateOutc
     <div>
       {url && (
         <div class="bg-surface-2 px-3.5 py-3">
-          <span class="block font-mono text-xs wrap-anywhere text-muted" data-testid="url">
-            {url}
-          </span>
+          <UrlBlock url={url} />
         </div>
       )}
       <div class="px-3.5 py-4">

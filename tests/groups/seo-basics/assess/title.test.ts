@@ -60,8 +60,8 @@ describe('assess: Title', () => {
   it('Duplicate: ×N поряд з довжиною і рейтингом першого значення', () => {
     const row = titleRow({ count: 3, value: text(40) });
     expect(row.badges).toEqual([
-      { text: 'Duplicate ×3', tone: 'warn' },
       { text: '40 chars · Good', tone: 'good' },
+      { text: 'Duplicate ×3', tone: 'warn' },
     ]);
     expect(row.values).toEqual([{ kind: 'text', text: text(40) }]);
   });

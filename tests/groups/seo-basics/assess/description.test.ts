@@ -33,8 +33,8 @@ describe('assess: Description', () => {
   });
   it('Duplicate: рейтинг першого значення', () => {
     expect(descRow({ count: 2, value: text(100) }).badges).toEqual([
-      { text: 'Duplicate ×2', tone: 'warn' },
       { text: '100 chars · Good', tone: 'good' },
+      { text: 'Duplicate ×2', tone: 'warn' },
     ]);
   });
 });

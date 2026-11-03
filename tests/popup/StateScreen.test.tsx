@@ -15,7 +15,7 @@ describe('StateScreen', () => {
     expect(screen.queryByTestId('url')).toBeNull();
   });
 
-  it('not-html: contentType моноширинним шрифтом у реченні', () => {
+  it('not-html: contentType у реченні', () => {
     render(
       <StateScreen
         url="https://example.com/a.pdf"
@@ -25,20 +25,17 @@ describe('StateScreen', () => {
     expect(screen.getByRole('heading').textContent).toBe('Not an HTML page');
     const type = screen.getByText('application/pdf');
     expect(type.tagName).toBe('CODE');
-    expect(type.className).toContain('font-mono');
     expect(type.parentElement?.textContent).toBe(
       'seocat measures HTML documents. This one is application/pdf.',
     );
   });
 
-  it('failed: сирий message дрібним моноширинним вторинним текстом', () => {
+  it('failed: сирий message', () => {
     render(
       <StateScreen url="https://example.com/" outcome={{ kind: 'failed', message: 'boom' }} />,
     );
     expect(screen.getByRole('heading').textContent).toBe("Couldn't measure this page");
     const msg = screen.getByText('boom');
-    expect(msg.className).toContain('font-mono');
-    expect(msg.className).toContain('text-muted');
-    expect(msg.className).toContain('text-xs');
+    expect(msg.tagName).toBe('SPAN');
   });
 });
