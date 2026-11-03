@@ -22,7 +22,10 @@ Resolved by grilling on 2026-11-03. No new glossary terms; no ADR (cheap to chan
 - **Two SVG sources in `assets/icons/`** (outside `public/`, so they never reach `dist/`), both on a 1024×1024 canvas:
   - `toolbar.svg`: the bare glyph, solid `#F28C28`.
   - `app.svg`: the same glyph in white on a `#F28C28` rounded square, 824×824 at offset 100, corner radius 185, no shadow (macOS icon grid).
-- **Motif:** a filled silhouette of a cat's head with two pointed ears; no eyes, whiskers or fine detail, so it reads at 16px. The build session draws it to these constraints.
+- **Motif:** a filled silhouette of a cat's head with two pointed ears. Originally no face at all; revised on 2026-11-04 to add one, cut out of the head (negative space, so the palette stays two colours and the toolbar icon stays single-colour on light and dark toolbars):
+  - `app.svg`: vertical oval eyes, a rounded downward triangle nose and an "ω" mouth.
+  - `toolbar.svg`: simplified for 16px — larger eyes and nose, no mouth (a mouth at 16px is a 1px smear).
+  - Still no whiskers: thin lines vanish at small sizes.
 - **Toolbar icon is in color, not a template image.** A color image renders predictably on light and dark toolbars whatever Safari does with monochrome icons, so template rendering was deliberately not verified (research found no primary source on Safari's tinting; Safari needs PNG, not SVG, for `default_icon`).
 - **Sizes:**
   - `action.default_icon`: 16, 19, 32, 38 px, from `toolbar.svg`.
