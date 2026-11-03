@@ -2,8 +2,8 @@
 node = "26"
 
 [tasks.setup]
-description = "Встановити залежності (npm ci)"
-run = "npm ci"
+description = "Встановити залежності (npm ci) і git-хук pre-commit"
+run = ["npm ci", "mise generate git-pre-commit --write --task pre-commit"]
 
 [tasks.build]
 description = "Зібрати розширення в dist/ (попап + extract.js)"
@@ -18,8 +18,22 @@ description = "Запустити Vitest"
 run = "npx vitest run"
 
 [tasks.check]
-description = "tsc --noEmit і перевірка Prettier"
+description = "tsc --noEmit, перевірка Prettier і механічні правила"
 run = ["npx tsc --noEmit", "npx prettier --check ."]
+depends = ["check:rules"]
+
+# Механічні правила, які інакше ловить лише рецензент (див. спеку #1):
+# тести не перевіряють стилі; компоненти беруть кольори з токенів @theme, а не з палітри Tailwind.
+[tasks."check:rules"]
+description = "Заборонити перевірку стилів у tests/ і сирі класи палітри в src/"
+run = [
+  "! grep -rnE 'className|toHaveClass|toHaveStyle' tests/ || { echo 'tests/: тести перевіряють поведінку, а не стилі'; exit 1; }",
+  "! grep -rnE '\\b(bg|text|border|fill|stroke|ring|outline|divide|from|to|via)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]{2,3}\\b' src/ || { echo 'src/: використовуй токени теми з @theme замість класів палітри'; exit 1; }",
+]
+
+[tasks.pre-commit]
+description = "Перевірки перед комітом (ставиться в .git/hooks через mise run setup)"
+depends = ["check", "test"]
 
 [tasks.icons]
 description = "Згенерувати PNG-іконки з assets/icons/*.svg (вручну при зміні SVG)"

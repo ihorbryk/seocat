@@ -4,11 +4,11 @@
 Передумови: [mise](https://mise.jdx.dev) (ставить Node 26) і Xcode (ручна передумова для обгортки Safari).
 
 ```
-mise run setup   # npm ci
+mise run setup   # npm ci + git-хук pre-commit (check і test перед кожним комітом)
 mise run build   # dist/: попап + extract.js
 mise run dev     # перезбирає dist/ при змінах
 mise run test    # Vitest + jsdom
-mise run check   # tsc --noEmit + Prettier --check
+mise run check   # tsc --noEmit + Prettier --check + механічні правила (check:rules)
 mise run fmt     # Prettier --write
 mise run icons   # PNG-іконки з assets/icons/*.svg (вручну при зміні SVG; результат комітиться)
 ```
