@@ -3,7 +3,13 @@ import { assess } from '../../../../src/groups/seo-basics/assess';
 import type { PageSnapshot } from '../../../../src/groups/seo-basics/types';
 
 function titleRow(title: PageSnapshot['title']) {
-  const view = assess({ url: 'https://example.com/', title });
+  const view = assess({
+    url: 'https://example.com/',
+    title,
+    canonical: [],
+    robots: [],
+    hreflang: [],
+  });
   const meta = view.sections.find((s) => s.id === 'meta');
   const row = meta?.rows.find((r) => r.id === 'title');
   if (!row) throw new Error('рядок Title не знайдено');
@@ -15,7 +21,10 @@ const text = (n: number) => 'a'.repeat(n);
 describe('assess: хедер', () => {
   it('переносить URL без змін', () => {
     const url = 'https://example.com/a?b=1#c';
-    expect(assess({ url, title: { count: 0, value: null } }).header.url).toBe(url);
+    expect(
+      assess({ url, title: { count: 0, value: null }, canonical: [], robots: [], hreflang: [] })
+        .header.url,
+    ).toBe(url);
   });
 });
 

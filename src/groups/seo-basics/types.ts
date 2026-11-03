@@ -9,6 +9,23 @@ import type { HeaderView } from './assess/header';
 export interface PageSnapshot {
   url: string;
   title: TextTag;
+  /** Абсолютні href кожного canonical; '' = Empty. */
+  canonical: string[];
+  robots: RobotsEntry[];
+  hreflang: HreflangEntry[];
+}
+
+export interface RobotsEntry {
+  /** Нижнім регістром. */
+  name: string;
+  /** '' = Empty. */
+  content: string;
+}
+
+export interface HreflangEntry {
+  code: string;
+  /** Абсолютний URL; '' = Empty. */
+  href: string;
 }
 
 /** Готове до показу: хедер + секції таблиці. */

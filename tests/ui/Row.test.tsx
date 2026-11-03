@@ -74,4 +74,20 @@ describe('Table', () => {
     expect(screen.getByText('Meta')).toBeTruthy();
     expect(screen.getByText('Hi')).toBeTruthy();
   });
+
+  it('count показано в лівій колонці, а Empty-запис має текстовий префікс перед бейджем', () => {
+    const tr = renderRow({
+      id: 'hreflang',
+      label: 'hreflang',
+      count: 2,
+      badges: [],
+      values: [
+        { kind: 'text', text: 'en → https://example.com/en' },
+        { kind: 'badge', prefix: 'de → ', badge: { text: 'Empty', tone: 'warn' } },
+      ],
+    });
+    expect(within(within(tr).getByRole('rowheader')).getByText('2')).toBeTruthy();
+    const cell = within(tr).getByRole('cell');
+    expect(cell.textContent).toBe('en → https://example.com/ende → Empty');
+  });
 });
