@@ -10,6 +10,28 @@ export interface PageSnapshot {
   url: string;
   title: TextTag;
   description: TextTag;
+  words: number;
+  images: number;
+  links: number;
+  /** Лічильники H1..H6 (індекс 0 = H1). */
+  headings: number[];
+  /** Абсолютні href кожного canonical; '' = Empty. */
+  canonical: string[];
+  robots: RobotsEntry[];
+  hreflang: HreflangEntry[];
+}
+
+export interface RobotsEntry {
+  /** Нижнім регістром. */
+  name: string;
+  /** '' = Empty. */
+  content: string;
+}
+
+export interface HreflangEntry {
+  code: string;
+  /** Абсолютний URL; '' = Empty. */
+  href: string;
 }
 
 /** Готове до показу: хедер + секції таблиці. */

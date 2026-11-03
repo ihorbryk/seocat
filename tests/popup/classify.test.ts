@@ -1,16 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { classify } from '../../src/popup/classify';
 import type { Envelope } from '../../src/shared/envelope';
+import { snapshot } from '../snapshot';
 
 const okEnvelope: Envelope = {
   kind: 'ok',
-  groups: {
-    'seo-basics': {
-      url: 'https://example.com/',
-      title: { count: 1, value: 'Hi' },
-      description: { count: 0, value: null },
-    },
-  },
+  groups: { 'seo-basics': snapshot() },
 };
 
 describe('classify', () => {
@@ -34,13 +29,10 @@ describe('classify', () => {
     });
   });
 
-  it('запис кадру з error і result: null (реальна відповідь Safari) -> unreadable', () => {
-    const safariFrame = {
-      frameId: 0,
-      result: null,
-      error: 'Failed to execute script. Extension does not have access to this frame.',
-    };
-    expect(classify({ results: [safariFrame] })).toEqual({ kind: 'unreadable' });
+  it('запис кадру з error і result: null -> unreadable', () => {
+    expect(classify({ results: [{ frameId: 0, error: { message: 'x' }, result: null }] })).toEqual({
+      kind: 'unreadable',
+    });
   });
 
   it('порожній масив результатів -> unreadable', () => {

@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { assess } from '../../../../src/groups/seo-basics/assess';
 import type { PageSnapshot } from '../../../../src/groups/seo-basics/types';
+import { snapshot } from '../../../snapshot';
 
 function descRow(description: PageSnapshot['description']) {
-  const view = assess({
-    url: 'https://example.com/',
-    title: { count: 0, value: null },
-    description,
-  });
+  const view = assess(snapshot({ title: { count: 0, value: null }, description }));
   const row = view.sections.find((s) => s.id === 'meta')?.rows.find((r) => r.id === 'description');
   if (!row) throw new Error('рядок Description не знайдено');
   return row;

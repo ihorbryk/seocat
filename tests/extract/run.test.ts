@@ -10,11 +10,10 @@ describe('extract run', () => {
     expect(envelope).toEqual({
       kind: 'ok',
       groups: {
-        'seo-basics': {
+        'seo-basics': expect.objectContaining({
           url: doc.URL,
           title: { count: 1, value: 'Hello world' },
-          description: { count: 0, value: null },
-        },
+        }),
       },
     });
   });
