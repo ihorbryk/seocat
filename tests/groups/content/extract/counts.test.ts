@@ -47,19 +47,6 @@ describe('content extract: words', () => {
   });
 });
 
-describe('content extract: links', () => {
-  it('рахує <a href> будь-якої схеми, включно з дублікатами', () => {
-    const d = doc(
-      `<a href="/a">1</a><a href="/a">2</a><a href="#">3</a><a href="mailto:x@y.z">4</a><a href="javascript:void(0)">5</a><a href="">6</a>`,
-    );
-    expect(extract(d).links).toBe(6);
-  });
-  it('не рахує <a> без href і <area>', () => {
-    const d = doc(`<a name="x">1</a><a>2</a><map><area href="/z"></map>`);
-    expect(extract(d).links).toBe(0);
-  });
-});
-
 describe('content extract: headings', () => {
   it('шість лічильників по рівнях', () => {
     const d = doc(`<h1>a</h1><h2>b</h2><h2>c</h2><h4>d</h4><h6>e</h6><h6>f</h6><h6>g</h6>`);

@@ -21,11 +21,11 @@ describe('View Content', () => {
     expect(screen.getByText('Hello')).toBeTruthy();
   });
 
-  it('плитки words/links з роздільниками тисяч', () => {
+  it('плитка words з роздільниками тисяч; images і links живуть на своїх вкладках', () => {
     render(<View view={assess(snap())} />);
     expect(screen.getByTestId('tile-words').textContent).toBe('1,488words');
     expect(screen.queryByTestId('tile-images')).toBeNull();
-    expect(screen.getByTestId('tile-links').textContent).toBe('0links');
+    expect(screen.queryByTestId('tile-links')).toBeNull();
   });
 
   it('діаграма H1–H6: шість стовпчиків, нулі як заглушки', () => {

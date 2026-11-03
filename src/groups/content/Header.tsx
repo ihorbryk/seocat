@@ -1,11 +1,11 @@
 import { Tile } from '../../ui/Tile';
 import type { HeaderView } from './assess/header';
 
-/** Хедер (не липкий): плитки words/links, діаграма H1–H6 (прототип, варіант D). */
+/** Хедер (не липкий): плитка words, діаграма H1–H6 (прототип, варіант D). */
 export function Header({ header }: { header: HeaderView }) {
   return (
     <div class="bg-surface-2 px-3.5 py-3">
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-1 gap-2">
         {header.tiles.map((t) => (
           <Tile key={t.id} id={t.id} value={t.value} label={t.label} />
         ))}

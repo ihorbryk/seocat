@@ -30,7 +30,6 @@ export const scenarios: Scenario[] = [
             'A step-by-step guide to building, signing and running a Safari Web Extension on macOS with TypeScript and Vite, from manifest to Xcode wrapper.',
         },
         words: 1842,
-        links: 87,
         headings: [1, 6, 11, 0, 0, 0],
       },
       indexing: {
@@ -57,7 +56,6 @@ export const scenarios: Scenario[] = [
             'Buy product 8812 at Example Shop: free delivery, 30-day returns, secure checkout, gift wrapping, loyalty points and the best prices on everything you need for home, garden and office.',
         },
         words: 37,
-        links: 212,
         headings: [0, 0, 2, 0, 0, 0],
       },
       indexing: {
@@ -83,7 +81,6 @@ export const scenarios: Scenario[] = [
         },
         description: { count: 1, value: 'Огляд того, як ШІ впливає на зайнятість.' },
         words: 12403,
-        links: 1488,
         headings: [2, 18, 41, 7, 1, 0],
       },
       indexing: {

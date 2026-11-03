@@ -10,7 +10,6 @@ export interface ContentSnapshot {
   title: TextTag;
   description: TextTag;
   words: number;
-  links: number;
   /** Лічильники H1..H6 (індекс 0 = H1). */
   headings: number[];
 }
