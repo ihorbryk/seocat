@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <mask id="face" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
     <path fill="#FFFFFF" d="M180 150 L400 300 Q512 270 624 300 L844 150 C890 300 890 400 870 520 C850 700 700 900 512 900 C324 900 174 700 154 520 C134 400 134 300 180 150 Z"/>
-    <ellipse cx="370" cy="530" rx="64" ry="96" fill="#000000"/>
-    <ellipse cx="654" cy="530" rx="64" ry="96" fill="#000000"/>
+    <ellipse cx="370" cy="545" rx="74" ry="100" fill="#000"/><path fill="#fff" d="M276 425 L464 425 L464 520 L276 495 Z"/>
+    <ellipse cx="654" cy="545" rx="74" ry="100" fill="#000"/><path fill="#fff" d="M748 425 L560 425 L560 520 L748 495 Z"/>
     <path fill="#000000" stroke="#000000" stroke-width="30" stroke-linejoin="round" d="M450 680 L574 680 L512 750 Z"/>
   </mask>
   <path fill="#F28C28" mask="url(#face)" d="M180 150 L400 300 Q512 270 624 300 L844 150 C890 300 890 400 870 520 C850 700 700 900 512 900 C324 900 174 700 154 520 C134 400 134 300 180 150 Z"/>
