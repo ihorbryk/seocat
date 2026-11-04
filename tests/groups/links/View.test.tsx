@@ -82,4 +82,67 @@ describe('View Links', () => {
     renderLinks();
     expect(screen.getByText('No links on this page')).toBeTruthy();
   });
+
+  describe('Search', () => {
+    const search = () => screen.getByRole('searchbox', { name: 'Filter links' });
+    const type = (text: string) => fireEvent.input(search(), { target: { value: text } });
+
+    it('звужує список за Anchor text і адресою, без урахування регістру', () => {
+      renderLinks(
+        { text: 'Pricing', href: 'https://example.com/a' },
+        { text: 'Home', href: 'https://example.com/PRICING' },
+        { text: 'About' },
+      );
+      type('pricing');
+      expect(rows()).toEqual(['link-0', 'link-1']);
+    });
+
+    it('alt Image усередині Link — це Anchor text', () => {
+      renderLinks({ text: '', imageAlts: ['Logo'] }, {});
+      type('logo');
+      expect(rows()).toEqual(['link-0']);
+    });
+
+    it('знаходить декодовану адресу; битий escape лишає сиру', () => {
+      renderLinks(
+        { href: 'https://uk.wikipedia.org/wiki/%D0%9A%D0%B8%D1%97%D0%B2' },
+        { href: 'https://example.com/%E0%A4%A' },
+      );
+      type('київ');
+      expect(rows()).toEqual(['link-0']);
+      type('%e0%a4');
+      expect(rows()).toEqual(['link-1']);
+    });
+
+    it('бейджі External, nofollow і Empty не шукаються', () => {
+      renderLinks({ href: 'https://other.org/', rel: ['nofollow'] }, { text: '' });
+      type('external');
+      expect(rows()).toEqual([]);
+      type('nofollow');
+      expect(rows()).toEqual([]);
+      type('empty');
+      expect(rows()).toEqual([]);
+    });
+
+    it('поєднується з Filter, а лічильники плиток не змінює', () => {
+      renderLinks(
+        { href: 'https://other.org/blog' },
+        { href: 'https://other.org/shop' },
+        { href: 'https://example.com/blog' },
+      );
+      fireEvent.click(tile('external'));
+      type('blog');
+      expect(rows()).toEqual(['link-0']);
+      expect(tile('external').textContent).toBe('2external');
+    });
+
+    it('нічого не знайдено: повідомлення, поле лишається; Escape очищає', () => {
+      renderLinks({});
+      type('zzz');
+      expect(screen.getByText('No links match')).toBeTruthy();
+      fireEvent.keyDown(search(), { key: 'Escape' });
+      expect((search() as HTMLInputElement).value).toBe('');
+      expect(rows()).toEqual(['link-0']);
+    });
+  });
 });

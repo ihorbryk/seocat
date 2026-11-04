@@ -1,4 +1,5 @@
 import { EMPTY, EXTERNAL, rel } from '../../../shared/badges';
+import { searchTexts } from '../../../shared/search';
 import type { BadgeView } from '../../../ui/types';
 import type { LinkEntry } from '../types';
 
@@ -25,6 +26,8 @@ export interface LinkView {
   badges: BadgeView[];
   /** Фільтри, під які потрапляє Link. */
   filters: LinkFilter[];
+  /** Рядки для Search: Anchor text і адреса, без бейджів. */
+  search: string[];
 }
 
 /** Значення `rel`, що роблять Link Nofollow (`GLOSSARY.md`). */
@@ -44,6 +47,10 @@ export function assessLink(link: LinkEntry, index: number, pageHost: string | nu
     address: assessAddress(link.href),
     badges: [...(scope === 'external' ? [EXTERNAL] : []), ...nofollow.map(rel)],
     filters,
+    search: searchTexts({
+      texts: [anchor.kind === 'badge' ? '' : anchor.text],
+      addresses: [link.href],
+    }),
   };
 }
 

@@ -52,6 +52,14 @@ _Avoid_: Unknown, n/a
 An Image whose file is loaded, whose file size is known, and whose file size is above 1 MB. An Image that is Not loaded or Size unknown is never Heavy.
 _Avoid_: Large, big, oversized
 
+**Filter**:
+A header tile of the Images or Links Group that narrows the list to the entries in one state, such as Internal or Heavy. At most one Filter is active at a time, and its count always describes the whole Page.
+_Avoid_: Tab, category
+
+**Search**:
+Text typed above the list of Images or Links that narrows it to the entries whose alt or Anchor text, or whose address, contains it. It combines with the active Filter and never changes the Filter counts.
+_Avoid_: Text filter, query filter
+
 **Missing**:
 The state of a Metric whose source tag is absent from the Page.
 _Avoid_: Not found, none, null

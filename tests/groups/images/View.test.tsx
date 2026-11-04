@@ -103,4 +103,65 @@ describe('View Images', () => {
     renderImages();
     expect(screen.getByText('No images on this page')).toBeTruthy();
   });
+
+  describe('Search', () => {
+    const search = () => screen.getByRole('searchbox', { name: 'Filter images' });
+    const type = (text: string) => fireEvent.input(search(), { target: { value: text } });
+
+    it('звужує список за alt і адресою, без урахування регістру й пробілів по краях', () => {
+      renderImages(
+        { alt: 'Red Cat', src: 'https://example.com/a.png' },
+        { alt: 'Dog', src: 'https://cdn.example.com/CAT.jpg' },
+        { alt: 'Bird', src: 'https://example.com/b.png' },
+      );
+      type('  cat ');
+      expect(rows()).toEqual(['image-0', 'image-1']);
+    });
+
+    it('знаходить декодовану адресу і сиру з percent-кодуванням', () => {
+      renderImages({ alt: 'A', src: 'https://example.com/%D0%BA%D1%96%D1%82.png' });
+      type('КІТ');
+      expect(rows()).toEqual(['image-0']);
+      type('%d0%ba');
+      expect(rows()).toEqual(['image-0']);
+    });
+
+    it('у `data:` шукає лише видимий префікс', () => {
+      renderImages({ alt: 'A', src: 'data:image/png;base64,iVBORw0KGgo' });
+      type('image/png');
+      expect(rows()).toEqual(['image-0']);
+      type('iVBOR');
+      expect(rows()).toEqual([]);
+    });
+
+    it('бейджі Missing і Empty не шукаються', () => {
+      renderImages({ alt: null }, { alt: '' });
+      type('missing');
+      expect(rows()).toEqual([]);
+      type('empty');
+      expect(rows()).toEqual([]);
+    });
+
+    it('поєднується з Filter, а лічильники плиток не змінює', () => {
+      renderImages(
+        { alt: null, src: 'https://example.com/cat.png' },
+        { alt: null },
+        { alt: 'cat' },
+      );
+      fireEvent.click(tile('missing-alt'));
+      type('cat');
+      expect(rows()).toEqual(['image-0']);
+      expect(tile('missing-alt').textContent).toBe('2missing alt');
+      expect(tile('images').textContent).toBe('3images');
+    });
+
+    it('нічого не знайдено: повідомлення, поле лишається; Escape очищає', () => {
+      renderImages({ alt: 'A' });
+      type('zzz');
+      expect(screen.getByText('No images match')).toBeTruthy();
+      fireEvent.keyDown(search(), { key: 'Escape' });
+      expect((search() as HTMLInputElement).value).toBe('');
+      expect(rows()).toEqual(['image-0']);
+    });
+  });
 });

@@ -1,4 +1,5 @@
 import { EMPTY_ALT, MISSING, NOT_LOADED, SIZE_UNKNOWN } from '../../../shared/badges';
+import { searchTexts } from '../../../shared/search';
 import type { BadgeView } from '../../../ui/types';
 import type { ImageEntry } from '../types';
 import { formatBytes, isHeavy } from './bytes';
@@ -30,6 +31,8 @@ export interface ImageView {
   file: FileView;
   /** Фільтри, під які потрапляє Image; порожньо = лише плитка images. */
   filters: ImageFilter[];
+  /** Рядки для Search: alt і адреса (для `data:` лише видимий префікс), без бейджів. */
+  search: string[];
 }
 
 export function assessImage(image: ImageEntry, index: number): ImageView {
@@ -40,7 +43,19 @@ export function assessImage(image: ImageEntry, index: number): ImageView {
     link: assessLink(image.src),
     file: assessFile(image),
     filters: assessFilters(image),
+    search: assessSearch(image),
   };
+}
+
+function assessSearch({ alt, src }: ImageEntry): string[] {
+  if (src.startsWith('data:'))
+    return searchTexts({ texts: [alt ?? '', dataPrefix(src)], addresses: [] });
+  return searchTexts({ texts: [alt ?? ''], addresses: [src] });
+}
+
+/** `data:image/png;base64,`: повний URI може мати мегабайти. */
+function dataPrefix(src: string): string {
+  return src.slice(0, src.indexOf(',') + 1);
 }
 
 function assessFilters(image: ImageEntry): ImageFilter[] {
@@ -60,8 +75,7 @@ function assessAlt(alt: string | null): AltView {
 function assessLink(src: string): LinkView {
   if (src === '') return { kind: 'badge', badge: MISSING };
   // Safari не відкриває `data:` у вкладці, а повний URI може мати мегабайти.
-  if (src.startsWith('data:'))
-    return { kind: 'data', text: `${src.slice(0, src.indexOf(',') + 1)}…` };
+  if (src.startsWith('data:')) return { kind: 'data', text: `${dataPrefix(src)}…` };
   return { kind: 'link', href: src };
 }
 
