@@ -8,13 +8,45 @@ import { imageEntry, imagesSnapshot } from '../../snapshot';
 const renderImages = (...images: Partial<ImageEntry>[]) =>
   render(<View view={assess(imagesSnapshot({ images: images.map(imageEntry) }))} />);
 
+const rows = () => screen.queryAllByRole('listitem').map((li) => li.getAttribute('data-testid'));
+const tile = (id: string) => screen.getByTestId(`tile-${id}`);
+
 describe('View Images', () => {
-  it('плитки хедера: Total, Missing alt, Empty alt, > 1 MB', () => {
+  it('плитки хедера: images, Missing alt, Empty alt, > 1 MB', () => {
     renderImages({ alt: null }, { alt: '' }, { bytes: 3_000_000 });
-    expect(screen.getByTestId('tile-total').textContent).toBe('3images');
-    expect(screen.getByTestId('tile-missing-alt').textContent).toBe('1missing alt');
-    expect(screen.getByTestId('tile-empty-alt').textContent).toBe('1empty alt');
-    expect(screen.getByTestId('tile-heavy').textContent).toBe('1> 1 MB');
+    expect(tile('images').textContent).toBe('3images');
+    expect(tile('missing-alt').textContent).toBe('1missing alt');
+    expect(tile('empty-alt').textContent).toBe('1empty alt');
+    expect(tile('heavy').textContent).toBe('1> 1 MB');
+  });
+
+  it('клік по плитці показує лише її Images, повторний клік скидає фільтр', () => {
+    renderImages({}, { alt: null }, { alt: null, bytes: 2_000_000 });
+    fireEvent.click(tile('missing-alt'));
+    expect(rows()).toEqual(['image-1', 'image-2']);
+    expect(tile('missing-alt').getAttribute('aria-pressed')).toBe('true');
+    expect(tile('images').getAttribute('aria-pressed')).toBe('false');
+
+    fireEvent.click(tile('missing-alt'));
+    expect(rows()).toEqual(['image-0', 'image-1', 'image-2']);
+    expect(tile('images').getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('інша плитка перемикає фільтр, плитка images скидає', () => {
+    renderImages({ alt: '' }, { alt: null, bytes: 2_000_000 }, {});
+    fireEvent.click(tile('empty-alt'));
+    fireEvent.click(tile('heavy'));
+    expect(rows()).toEqual(['image-1']);
+    expect(tile('empty-alt').getAttribute('aria-pressed')).toBe('false');
+
+    fireEvent.click(tile('images'));
+    expect(rows()).toEqual(['image-0', 'image-1', 'image-2']);
+  });
+
+  it('плитка з нулем вимкнена', () => {
+    renderImages({ alt: null });
+    expect((tile('heavy') as HTMLButtonElement).disabled).toBe(true);
+    expect((tile('missing-alt') as HTMLButtonElement).disabled).toBe(false);
   });
 
   it('рядок Image: alt, посилання в новій вкладці, розміри і вага', () => {

@@ -18,6 +18,9 @@ export type SizeView =
 export type FileView =
   { kind: 'loaded'; dimensions: string; size: SizeView } | { kind: 'badge'; badge: BadgeView };
 
+/** Плитка хедера, яка показує Image, коли її фільтр активний. */
+export type ImageFilter = 'missing-alt' | 'empty-alt' | 'heavy';
+
 export interface ImageView {
   id: string;
   /** Адреса для прев'ю в попапі; null = адреси немає. */
@@ -25,6 +28,8 @@ export interface ImageView {
   alt: AltView;
   link: LinkView;
   file: FileView;
+  /** Фільтри, під які потрапляє Image; порожньо = лише плитка images. */
+  filters: ImageFilter[];
 }
 
 export function assessImage(image: ImageEntry, index: number): ImageView {
@@ -34,7 +39,16 @@ export function assessImage(image: ImageEntry, index: number): ImageView {
     alt: assessAlt(image.alt),
     link: assessLink(image.src),
     file: assessFile(image),
+    filters: assessFilters(image),
   };
+}
+
+function assessFilters(image: ImageEntry): ImageFilter[] {
+  const filters: ImageFilter[] = [];
+  if (image.alt === null) filters.push('missing-alt');
+  if (image.alt === '') filters.push('empty-alt');
+  if (isHeavy(image)) filters.push('heavy');
+  return filters;
 }
 
 function assessAlt(alt: string | null): AltView {

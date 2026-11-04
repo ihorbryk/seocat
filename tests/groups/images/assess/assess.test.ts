@@ -76,8 +76,23 @@ describe('assess Images: розміри і вага', () => {
   });
 });
 
+describe('assess Images: фільтри', () => {
+  it.each([
+    ['alt є, легкий файл', {}, []],
+    ['Missing alt', { alt: null }, ['missing-alt']],
+    ['Empty alt', { alt: '' }, ['empty-alt']],
+    ['Heavy', { bytes: 1_048_577 }, ['heavy']],
+    ['рівно 1 MB не Heavy', { bytes: 1_048_576 }, []],
+    ['Size unknown не Heavy', { bytes: null }, []],
+    ['Not loaded не Heavy', { natural: null, bytes: 5_000_000 }, []],
+    ['Missing alt і Heavy разом', { alt: null, bytes: 2_000_000 }, ['missing-alt', 'heavy']],
+  ] as const)('%s', (_, over, filters) => {
+    expect(one(over).filters).toEqual(filters);
+  });
+});
+
 describe('assess Images: хедер', () => {
-  it('Total, Missing alt, Empty alt, > 1 MB; невідома вага не рахується у > 1 MB', () => {
+  it('images, Missing alt, Empty alt, > 1 MB; невідома вага не рахується у > 1 MB', () => {
     const view = assess(
       imagesSnapshot({
         images: [
@@ -90,19 +105,35 @@ describe('assess Images: хедер', () => {
       }),
     );
     expect(view.header.tiles).toEqual([
-      { id: 'total', value: '5', label: 'images', tone: 'neutral' },
-      { id: 'missing-alt', value: '2', label: 'missing alt', tone: 'warn' },
-      { id: 'empty-alt', value: '1', label: 'empty alt', tone: 'neutral' },
-      { id: 'heavy', value: '1', label: '> 1 MB', tone: 'bad' },
+      { id: 'images', value: '5', label: 'images', tone: 'neutral', filter: null, disabled: false },
+      {
+        id: 'missing-alt',
+        value: '2',
+        label: 'missing alt',
+        tone: 'warn',
+        filter: 'missing-alt',
+        disabled: false,
+      },
+      {
+        id: 'empty-alt',
+        value: '1',
+        label: 'empty alt',
+        tone: 'neutral',
+        filter: 'empty-alt',
+        disabled: false,
+      },
+      { id: 'heavy', value: '1', label: '> 1 MB', tone: 'bad', filter: 'heavy', disabled: false },
     ]);
   });
-  it('нулі без кольору', () => {
-    expect(assess(imagesSnapshot()).header.tiles.map((t) => [t.value, t.tone])).toEqual([
-      ['0', 'neutral'],
-      ['0', 'neutral'],
-      ['0', 'neutral'],
-      ['0', 'neutral'],
-    ]);
+  it('нулі без кольору і вимкнені', () => {
+    expect(assess(imagesSnapshot()).header.tiles.map((t) => [t.value, t.tone, t.disabled])).toEqual(
+      [
+        ['0', 'neutral', true],
+        ['0', 'neutral', true],
+        ['0', 'neutral', true],
+        ['0', 'neutral', true],
+      ],
+    );
   });
   it('Images у порядку знімка з унікальними id', () => {
     const view = assess(imagesSnapshot({ images: [imageEntry(), imageEntry()] }));

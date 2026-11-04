@@ -35,3 +35,18 @@ export interface SectionView {
   title: string;
   rows: RowView[];
 }
+
+/** Плитка-фільтр хедера Group (малює `FilterTiles`). */
+export interface FilterTileView<F extends string> {
+  /** Стабільний ідентифікатор плитки (ключ і для тестів). */
+  id: string;
+  /** Число з роздільниками тисяч. */
+  value: string;
+  label: string;
+  /** Колір числа. */
+  tone: Tone;
+  /** Фільтр плитки; null = показати всі записи. */
+  filter: F | null;
+  /** Плитка з нулем не клікабельна. */
+  disabled: boolean;
+}

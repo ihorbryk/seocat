@@ -48,6 +48,10 @@ _Avoid_: Broken, pending, missing (when the tag exists)
 The state of a loaded Image whose file size the browser does not reveal to seocat, typically a file from another origin that sends no CORS headers.
 _Avoid_: Unknown, n/a
 
+**Heavy**:
+An Image whose file is loaded, whose file size is known, and whose file size is above 1 MB. An Image that is Not loaded or Size unknown is never Heavy.
+_Avoid_: Large, big, oversized
+
 **Missing**:
 The state of a Metric whose source tag is absent from the Page.
 _Avoid_: Not found, none, null

@@ -1,43 +1,43 @@
-import type { Tone } from '../../../ui/types';
-import type { ImagesSnapshot } from '../types';
-import { isHeavy } from './bytes';
+import type { FilterTileView, Tone } from '../../../ui/types';
+import type { ImageFilter, ImageView } from './image';
 
-export interface TileView {
-  id: 'total' | 'missing-alt' | 'empty-alt' | 'heavy';
-  /** Число з роздільниками тисяч. */
-  value: string;
-  label: string;
-  /** Колір числа. */
-  tone: Tone;
-}
+export type TileView = FilterTileView<ImageFilter> & { id: 'images' | ImageFilter };
 
-/** Хедер: чотири плитки. */
+/** Хедер: чотири плитки-фільтри. */
 export interface HeaderView {
   tiles: TileView[];
 }
 
 const formatCount = new Intl.NumberFormat('en-US');
 
-export function assessHeader({ images }: ImagesSnapshot): HeaderView {
-  const missingAlt = images.filter((i) => i.alt === null).length;
-  const emptyAlt = images.filter((i) => i.alt === '').length;
-  const heavy = images.filter(isHeavy).length;
+const FILTERS: { filter: ImageFilter; label: string; tone: Tone }[] = [
+  { filter: 'missing-alt', label: 'missing alt', tone: 'warn' },
+  { filter: 'empty-alt', label: 'empty alt', tone: 'neutral' },
+  { filter: 'heavy', label: '> 1 MB', tone: 'bad' },
+];
+
+/** Лічильники рахуються з тих самих `filters`, за якими View фільтрує список. */
+export function assessHeader(images: ImageView[]): HeaderView {
+  const tile = (
+    id: TileView['id'],
+    filter: ImageFilter | null,
+    label: string,
+    count: number,
+    tone: Tone,
+  ): TileView => ({
+    id,
+    value: formatCount.format(count),
+    label,
+    tone: count ? tone : 'neutral',
+    filter,
+    disabled: count === 0,
+  });
   return {
     tiles: [
-      { id: 'total', value: formatCount.format(images.length), label: 'images', tone: 'neutral' },
-      {
-        id: 'missing-alt',
-        value: formatCount.format(missingAlt),
-        label: 'missing alt',
-        tone: missingAlt ? 'warn' : 'neutral',
-      },
-      { id: 'empty-alt', value: formatCount.format(emptyAlt), label: 'empty alt', tone: 'neutral' },
-      {
-        id: 'heavy',
-        value: formatCount.format(heavy),
-        label: '> 1 MB',
-        tone: heavy ? 'bad' : 'neutral',
-      },
+      tile('images', null, 'images', images.length, 'neutral'),
+      ...FILTERS.map(({ filter, label, tone }) =>
+        tile(filter, filter, label, images.filter((i) => i.filters.includes(filter)).length, tone),
+      ),
     ],
   };
 }

@@ -1,6 +1,6 @@
 # Як влаштовано код seocat
 
-Терміни (Page, Metric, Group, Image, Link, Anchor text, Internal, External, Nofollow, Missing, Empty, Duplicate, Not loaded, Size unknown, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003 (виняток для Images — ADR 0005), поділ Group на дві половини — в ADR 0004.
+Терміни (Page, Metric, Group, Image, Link, Anchor text, Internal, External, Nofollow, Missing, Empty, Duplicate, Not loaded, Size unknown, Heavy, Length rating) визначено в `GLOSSARY.md`, правила вимірювання — в ADR 0003 (виняток для Images — ADR 0005), поділ Group на дві половини — в ADR 0004.
 
 ## Шари
 
@@ -9,9 +9,9 @@
 - `src/groups/<group>/extract/`: чисте читання DOM на Page, повертає JSON-серіалізовний знімок Group (`ContentSnapshot`, `IndexingSnapshot`, `ImagesSnapshot`, `LinksSnapshot`). Лише Images читає стан завантаження (`naturalWidth`, `currentSrc`, Resource Timing, HTTP-кеш через `fetch`) і тому асинхронна; її тести підставляють ці значення на jsdom. Імпорти дозволені, бо все збирається в один `extract.js`.
 - `src/extract/run.ts`: вхід `extract.js`. Перевіряє `contentType` і загортає половини Page з `src/groups/page-registry.ts` у `try/catch`, повертаючи конверт (`src/extract/envelope.ts`).
 - `src/popup/measure.ts`: `measure(port)` бере активну вкладку і результат `executeScript` через `TabPort` і повертає URL та `Outcome`; Unreadable визначає лише він (ADR 0002). Адаптер над `browser.*` — `src/popup/browser-port.ts`, у тестах — фейк.
-- `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating, а для Links — Internal / External і Nofollow (знімок Links несе адресу Page, з якою порівнюється host).
+- `src/groups/<group>/assess/`: чиста функція «знімок → view Group» (`ContentView`, `IndexingView`) без DOM. Тут народжуються Missing / Empty / Duplicate і Length rating, а для Images — Heavy, для Links — Internal / External і Nofollow (знімок Links несе адресу Page, з якою порівнюється host).
 - `src/popup/Popup.tsx`: каркас попапа. Першим рядком назва і версія з `public/manifest.json` (імпорт під час збірки), під ним смуга URL з `tab.url`, далі для `ok` вкладки Groups (`src/ui/Tabs.tsx`, порядок за `src/groups/popup-registry.tsx`, панель — `GroupPanel`), інакше `StateScreen`. Початкову вкладку отримує пропсом `initialTab`, про перемикання повідомляє `onTabChange`. Його рендерять шел `App` (`measure(browserPort)`, остання вкладка в `localStorage` через `src/popup/last-tab.ts`) і showcase.
-- `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `Tile`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента. Images і Links малюють не таблицю, а власні списки (`src/groups/images/ImageRow.tsx` з прев'ю, яке попап завантажує сам, і `src/groups/links/LinkRow.tsx`). `Tile` з `onClick` стає кнопкою-фільтром (`aria-pressed`); так працюють плитки Links, а фільтр живе в `useState` їхнього `View` і не зберігається.
+- `src/ui/`: Group-незалежні компоненти (`Row`, `Table`, `Badge`, `Tile`, `FilterTiles`, `UrlBlock`, `Tabs`), які малюють `RowView` / `SectionView` з `src/ui/types.ts`. Новий рядок таблиці не потребує нового компонента. Images і Links малюють не таблицю, а власні списки (`src/groups/images/ImageRow.tsx` з прев'ю, яке попап завантажує сам, і `src/groups/links/LinkRow.tsx`). `Tile` з `onClick` стає кнопкою-фільтром (`aria-pressed`). Хедери Images і Links — це `FilterTiles` над `FilterTileView<F>` з `src/ui/types.ts`: один активний фільтр, повторний клік або плитка з `filter: null` скидає. Кожен запис списку несе `filters`, з яких `assess` рахує й лічильники плиток; сам фільтр живе в `useState` `View` Group і не зберігається.
 
 ## Додати Metric
 

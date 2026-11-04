@@ -1,18 +1,7 @@
-import type { Tone } from '../../../ui/types';
+import type { FilterTileView, Tone } from '../../../ui/types';
 import type { LinkFilter, LinkView } from './link';
 
-export interface TileView {
-  id: 'links' | LinkFilter;
-  /** Число з роздільниками тисяч. */
-  value: string;
-  label: string;
-  /** Колір числа. */
-  tone: Tone;
-  /** Фільтр плитки; null = показати всі Links. */
-  filter: LinkFilter | null;
-  /** Плитка з нулем не клікабельна. */
-  disabled: boolean;
-}
+export type TileView = FilterTileView<LinkFilter> & { id: 'links' | LinkFilter };
 
 /** Хедер: п'ять плиток-фільтрів. */
 export interface HeaderView {
@@ -35,7 +24,7 @@ export function assessHeader(links: LinkView[]): HeaderView {
     label: string,
     count: number,
     tone: Tone,
-  ) => ({
+  ): TileView => ({
     id,
     value: formatCount.format(count),
     label,
