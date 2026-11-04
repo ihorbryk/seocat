@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "seocat",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Shows SEO facts about the current page.",
   "permissions": ["activeTab", "scripting"],
   "action": {
