@@ -23,10 +23,13 @@ export interface HeaderView {
 const fmt = new Intl.NumberFormat('en-US');
 
 export function assessHeader(snapshot: ContentSnapshot): HeaderView {
-  const max = Math.max(1, ...snapshot.headings);
+  const counts = [1, 2, 3, 4, 5, 6].map(
+    (level) => snapshot.headings.filter((h) => h.level === level).length,
+  );
+  const max = Math.max(1, ...counts);
   return {
     tiles: [{ id: 'words', value: fmt.format(snapshot.words), label: 'words' }],
-    headings: snapshot.headings.map((count, i) => ({
+    headings: counts.map((count, i) => ({
       level: i + 1,
       count,
       ratio: count / max,

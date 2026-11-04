@@ -1,16 +1,11 @@
 import { EMPTY, EXTERNAL, rel } from '../../../shared/badges';
 import { searchTexts } from '../../../shared/search';
+import { textOrAlt, type TextOrAltView } from '../../../shared/text-or-alt';
 import type { BadgeView } from '../../../ui/types';
 import type { LinkEntry } from '../types';
 
 /** Плитка хедера, що показує лише свої Links. */
 export type LinkFilter = 'internal' | 'external' | 'nofollow' | 'empty-anchor';
-
-/** Anchor text: текст, alt Image усередині (з приміткою `img`) або Empty. */
-export type AnchorView =
-  | { kind: 'text'; text: string }
-  | { kind: 'image'; text: string }
-  | { kind: 'badge'; badge: BadgeView };
 
 /** Клікабельна веб-адреса, адреса іншої схеми без посилання або Empty. */
 export type AddressView =
@@ -20,7 +15,8 @@ export type AddressView =
 
 export interface LinkView {
   id: string;
-  anchor: AnchorView;
+  /** Anchor text: текст, alt Image усередині (з приміткою `img`) або Empty. */
+  anchor: TextOrAltView;
   address: AddressView;
   /** External і значення `rel` з Nofollow поруч з адресою. */
   badges: BadgeView[];
@@ -36,7 +32,7 @@ const NOFOLLOW = ['nofollow', 'sponsored', 'ugc'];
 export function assessLink(link: LinkEntry, index: number, pageHost: string | null): LinkView {
   const scope = scopeOf(link.href, pageHost);
   const nofollow = NOFOLLOW.filter((token) => link.rel.includes(token));
-  const anchor = assessAnchor(link);
+  const anchor = textOrAlt(link);
   const filters: LinkFilter[] = [];
   if (scope) filters.push(scope);
   if (nofollow.length) filters.push('nofollow');
@@ -71,13 +67,6 @@ function scopeOf(href: string, pageHost: string | null): 'internal' | 'external'
   const host = siteHost(href);
   if (host === null) return null;
   return host === pageHost ? 'internal' : 'external';
-}
-
-function assessAnchor({ text, imageAlts }: LinkEntry): AnchorView {
-  if (text) return { kind: 'text', text };
-  const alt = imageAlts.filter(Boolean).join(' ');
-  if (alt) return { kind: 'image', text: alt };
-  return { kind: 'badge', badge: EMPTY };
 }
 
 function assessAddress(href: string): AddressView {

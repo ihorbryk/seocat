@@ -1,3 +1,4 @@
+import type { TextAndAlts } from '../../shared/text-and-alts';
 import type { HeaderView } from './assess/header';
 import type { LinkView } from './assess/link';
 
@@ -12,13 +13,9 @@ export interface LinksSnapshot {
   links: LinkEntry[];
 }
 
-export interface LinkEntry {
+export interface LinkEntry extends TextAndAlts {
   /** Абсолютна адреса; '' = порожній `href`. */
   href: string;
-  /** `textContent` зі стиснутими пробілами. */
-  text: string;
-  /** alt кожного `<img alt>` усередині Link у порядку документа, зі стиснутими пробілами. */
-  imageAlts: string[];
   /** Токени `rel` у нижньому регістрі. */
   rel: string[];
 }

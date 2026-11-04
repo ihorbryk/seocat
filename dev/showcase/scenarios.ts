@@ -1,5 +1,5 @@
 import type { Outcome } from '../../src/extract/envelope';
-import { okOutcome } from '../../tests/snapshot';
+import { heading, okOutcome } from '../../tests/snapshot';
 
 /** Стан попапа для showcase: `?scenario=<id>`. Дані — з `.scratch/seocat-v1/prototypes/popup-layout-PROTOTYPE.html` (варіант D). */
 export interface Scenario {
@@ -14,6 +14,16 @@ export interface Scenario {
 const HEAVY_BASE =
   'https://www.example-media-group.com.ua/novyny/ekonomika/2026/11/03/yak-shtuchnyi-intelekt-zminiuie-rynok-pratsi';
 const HEAVY_URL = `${HEAVY_BASE}?utm_source=newsletter&utm_medium=email&utm_campaign=daily-digest#comments`;
+/** Рівні Headings великої Page: два H1, пропуски рівнів, глибока вкладеність. */
+const HEAVY_LEVELS = [1, 2, 3, 3, 4, 2, 3, 4, 5, 6, 2, 4, 1, 3, 3, 2, 3, 3, 3, 4, 4, 2, 3];
+const HEAVY_HEADINGS = HEAVY_LEVELS.map((level, i) =>
+  heading(
+    level,
+    i % 5 === 0
+      ? `Розділ ${i + 1}: як штучний інтелект змінює ринок праці в Україні, аналітика і прогнози експертів`
+      : `Розділ ${i + 1}`,
+  ),
+);
 const HEAVY_LANGS = ['uk', 'en', 'en-GB', 'de', 'fr', 'pl', 'es', 'it', 'pt-BR', 'cs', 'ro'];
 
 export const scenarios: Scenario[] = [
@@ -30,7 +40,26 @@ export const scenarios: Scenario[] = [
             'A step-by-step guide to building, signing and running a Safari Web Extension on macOS with TypeScript and Vite, from manifest to Xcode wrapper.',
         },
         words: 1842,
-        headings: [1, 6, 11, 0, 0, 0],
+        headings: [
+          heading(1, 'How to Build a Safari Web Extension in 2026'),
+          heading(2, 'What you need'),
+          heading(3, 'Xcode and the Safari Web Extension Packager'),
+          heading(3, 'Node and Vite'),
+          heading(2, 'Project layout'),
+          heading(3, 'manifest.json'),
+          heading(3, 'Popup'),
+          heading(3, 'Content scripts'),
+          heading(2, 'Building'),
+          heading(3, 'Two Vite passes'),
+          heading(3, 'Watch mode'),
+          heading(2, 'Signing'),
+          heading(3, 'Development certificate'),
+          heading(3, 'Allow unsigned extensions'),
+          heading(2, 'Running in Safari'),
+          heading(3, 'Enable the extension'),
+          heading(3, 'Grant website access'),
+          heading(2, 'Wrapping up'),
+        ],
       },
       indexing: {
         canonical: ['https://example.com/blog/safari-extensions-guide'],
@@ -56,7 +85,7 @@ export const scenarios: Scenario[] = [
             'Buy product 8812 at Example Shop: free delivery, 30-day returns, secure checkout, gift wrapping, loyalty points and the best prices on everything you need for home, garden and office.',
         },
         words: 37,
-        headings: [0, 0, 2, 0, 0, 0],
+        headings: [heading(3, '', ['Example Shop']), heading(3, '')],
       },
       indexing: {
         canonical: ['', 'https://shop.example.com/products'],
@@ -81,7 +110,7 @@ export const scenarios: Scenario[] = [
         },
         description: { count: 1, value: 'Огляд того, як ШІ впливає на зайнятість.' },
         words: 12403,
-        headings: [2, 18, 41, 7, 1, 0],
+        headings: HEAVY_HEADINGS,
       },
       indexing: {
         canonical: [

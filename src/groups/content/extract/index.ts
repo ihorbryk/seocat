@@ -1,5 +1,5 @@
 import type { ContentSnapshot } from '../types';
-import { extractHeadings } from './counts';
+import { extractHeadings } from './headings';
 import { extractDescription } from './description';
 import { extractTitle } from './title';
 import { extractWords } from './words';

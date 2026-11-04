@@ -13,7 +13,7 @@ A single fact about the Page, such as the length of its meta title or its number
 _Avoid_: Indicator, parameter, field, stat
 
 **Group**:
-A named set of Metrics shown together on its own tab of the popup. There are four Groups: **Content** (what the Page says, such as its meta title and description), **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang), **Images** (every Image on the Page with its alt text, address, pixel dimensions and file size) and **Links** (every Link on the Page with its anchor text, address, whether it is Internal or External, and whether it is Nofollow).
+A named set of Metrics shown together on its own tab of the popup. There are four Groups: **Content** (what the Page says, such as its meta title and description, its word count and its Outline), **Indexing** (how the Page instructs search engines, such as canonical, robots and hreflang), **Images** (every Image on the Page with its alt text, address, pixel dimensions and file size) and **Links** (every Link on the Page with its anchor text, address, whether it is Internal or External, and whether it is Nofollow).
 _Avoid_: Section, category, data block
 
 **Image**:
@@ -27,6 +27,14 @@ _Avoid_: Anchor (when meaning the element), URL, href
 **Anchor text**:
 The text a Link shows: its text content, or the alt of an Image inside it when it has no text. A Link with neither has Empty anchor text.
 _Avoid_: Link text, title, label
+
+**Heading**:
+One `<h1>`–`<h6>` element of the Page, hidden or not, listed in document order; its level is the digit of its tag. Its text is its text content, or the alt of an Image inside it when it has no text; a Heading with neither is an Empty heading. Elements that only claim to be headings through ARIA are not Headings.
+_Avoid_: Title, header, subheading
+
+**Outline**:
+Every Heading of the Page in document order, each indented by its own level rather than by the level of the Heading before it, so a skipped level stays visible.
+_Avoid_: Heading tree, structure, table of contents
 
 **Internal**:
 A Link whose address points to the Page's own host, ignoring a leading `www.`, the scheme and the port; a fragment on the Page itself is Internal. Subdomains are not the same host.

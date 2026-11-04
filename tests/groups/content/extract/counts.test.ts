@@ -48,12 +48,28 @@ describe('content extract: words', () => {
 });
 
 describe('content extract: headings', () => {
-  it('шість лічильників по рівнях', () => {
-    const d = doc(`<h1>a</h1><h2>b</h2><h2>c</h2><h4>d</h4><h6>e</h6><h6>f</h6><h6>g</h6>`);
-    expect(extract(d).headings).toEqual([1, 2, 0, 1, 0, 3]);
+  it('кожен h1–h6 у порядку документа з рівнем і текстом', () => {
+    const d = doc(`<h2>b</h2><div><h1>a</h1></div><h6>f</h6><h3>c</h3>`);
+    expect(extract(d).headings).toEqual([
+      { level: 2, text: 'b', imageAlts: [] },
+      { level: 1, text: 'a', imageAlts: [] },
+      { level: 6, text: 'f', imageAlts: [] },
+      { level: 3, text: 'c', imageAlts: [] },
+    ]);
   });
-  it('порожні та приховані враховуються', () => {
-    const d = doc(`<h1></h1><h1 hidden>x</h1><h3 style="display:none">y</h3>`);
-    expect(extract(d).headings).toEqual([2, 0, 1, 0, 0, 0]);
+  it('текст зі згорнутими пробілами і alt кожного Image усередині', () => {
+    const d = doc(
+      `<h1>\n  Hello   <b>big</b>\n world </h1><h2><img alt=" Brand  logo "><img src="x.png"></h2>`,
+    );
+    expect(extract(d).headings).toEqual([
+      { level: 1, text: 'Hello big world', imageAlts: [] },
+      { level: 2, text: '', imageAlts: ['Brand logo'] },
+    ]);
+  });
+  it('порожні та приховані враховуються, ARIA-заголовки ні', () => {
+    const d = doc(
+      `<h1></h1><h1 hidden>x</h1><h3 style="display:none">y</h3><div role="heading" aria-level="2">z</div>`,
+    );
+    expect(extract(d).headings.map((h) => h.level)).toEqual([1, 1, 3]);
   });
 });

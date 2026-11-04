@@ -1,20 +1,25 @@
 import { Row } from './Row';
+import { SECTION_TITLE_CLASS } from './SectionTitle';
 import type { SectionView } from './types';
 
-/** Таблиця Group. Рядок-розділювач секції з'являється лише тоді, коли секцій більше однієї. */
-export function Table({ sections }: { sections: SectionView[] }) {
-  const divided = sections.length > 1;
+/**
+ * Таблиця Group. Рядок-розділювач секції з'являється, коли секцій більше однієї,
+ * або коли `divided` (у Group є ще секції поза таблицею).
+ */
+export function Table({
+  sections,
+  divided = sections.length > 1,
+}: {
+  sections: SectionView[];
+  divided?: boolean;
+}) {
   return (
     <table class="w-full border-collapse">
       {sections.map((section) => (
         <tbody key={section.id}>
           {divided && (
             <tr>
-              <th
-                colSpan={2}
-                scope="colgroup"
-                class="bg-surface-2 px-2.5 py-1 text-left text-[10px] font-semibold tracking-wider text-muted uppercase"
-              >
+              <th colSpan={2} scope="colgroup" class={SECTION_TITLE_CLASS}>
                 {section.title}
               </th>
             </tr>

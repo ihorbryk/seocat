@@ -1,4 +1,4 @@
-import type { ContentSnapshot } from '../src/groups/content/types';
+import type { ContentSnapshot, HeadingEntry } from '../src/groups/content/types';
 import type { ImageEntry, ImagesSnapshot } from '../src/groups/images/types';
 import type { LinkEntry, LinksSnapshot } from '../src/groups/links/types';
 import type { IndexingSnapshot } from '../src/groups/indexing/types';
@@ -11,9 +11,14 @@ export function contentSnapshot(over: Partial<ContentSnapshot> = {}): ContentSna
     title: { count: 1, value: 'Hi' },
     description: { count: 0, value: null },
     words: 0,
-    headings: [0, 0, 0, 0, 0, 0],
+    headings: [],
     ...over,
   };
+}
+
+/** Heading з текстом і без Images усередині. */
+export function heading(level: number, text: string, imageAlts: string[] = []): HeadingEntry {
+  return { level, text, imageAlts };
 }
 
 /** Знімок Group Indexing без тегів; тести перекривають лише потрібні поля. */

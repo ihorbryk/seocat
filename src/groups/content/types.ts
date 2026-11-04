@@ -1,6 +1,8 @@
+import type { TextAndAlts } from '../../shared/text-and-alts';
 import type { SectionView } from '../../ui/types';
 import type { TextTag } from './extract/text-tag';
 import type { HeaderView } from './assess/header';
+import type { HeadingView } from './assess/outline';
 
 /**
  * Сирий JSON-серіалізовний знімок Group Content. Виконується на Page (extract),
@@ -10,12 +12,18 @@ export interface ContentSnapshot {
   title: TextTag;
   description: TextTag;
   words: number;
-  /** Лічильники H1..H6 (індекс 0 = H1). */
-  headings: number[];
+  /** Кожен Heading у порядку документа. */
+  headings: HeadingEntry[];
 }
 
-/** Готове до показу: хедер (плитки й діаграма) + секції таблиці. */
+export interface HeadingEntry extends TextAndAlts {
+  /** 1..6, цифра тегу. */
+  level: number;
+}
+
+/** Готове до показу: хедер (плитки й діаграма), секції таблиці й Outline. */
 export interface ContentView {
   header: HeaderView;
   sections: SectionView[];
+  outline: HeadingView[];
 }

@@ -48,7 +48,7 @@ it('зібраний extract.js повертає true і реєструє __seoc
         title: { count: 1, value: 'Built' },
         description: { count: 0, value: null },
         words: 0,
-        headings: [0, 0, 0, 0, 0, 0],
+        headings: [],
       },
       indexing: { canonical: [], robots: [], hreflang: [] },
       images: { images: [] },
