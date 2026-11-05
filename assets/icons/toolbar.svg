@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <mask id="face" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
-    <path fill="#FFFFFF" d="M180 150 L400 300 Q512 270 624 300 L844 150 C890 300 890 400 870 520 C850 700 700 900 512 900 C324 900 174 700 154 520 C134 400 134 300 180 150 Z"/>
-    <ellipse cx="370" cy="545" rx="74" ry="100" fill="#000"/><path fill="#fff" d="M276 425 L464 425 L464 520 L276 495 Z"/>
-    <ellipse cx="654" cy="545" rx="74" ry="100" fill="#000"/><path fill="#fff" d="M748 425 L560 425 L560 520 L748 495 Z"/>
-    <path fill="#000000" stroke="#000000" stroke-width="30" stroke-linejoin="round" d="M450 680 L574 680 L512 750 Z"/>
-  </mask>
-  <path fill="#F28C28" mask="url(#face)" d="M180 150 L400 300 Q512 270 624 300 L844 150 C890 300 890 400 870 520 C850 700 700 900 512 900 C324 900 174 700 154 520 C134 400 134 300 180 150 Z"/>
+  <path d="M120 445 C118 405 138 372 165 352 L178 245 L245 312 Q265 308 285 312 L312 248 L332 345 C352 380 370 400 425 408 C525 420 640 398 720 406 C800 414 830 480 815 545 C800 600 720 615 640 610 L450 612 C385 612 340 585 300 545 C262 528 215 522 175 512 C140 503 121 480 120 445 Z" fill="#F28C28" stroke="#F28C28" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M390 590 L320 830" fill="none" stroke="#F28C28" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M450 595 L500 700 L470 770" fill="none" stroke="#F28C28" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M665 600 L620 830" fill="none" stroke="#F28C28" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M745 590 L820 830" fill="none" stroke="#F28C28" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M800 470 C900 440 920 320 880 240 C860 200 815 200 805 240" fill="none" stroke="#F28C28" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

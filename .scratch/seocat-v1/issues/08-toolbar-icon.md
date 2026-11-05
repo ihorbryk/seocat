@@ -21,10 +21,9 @@ Resolved by grilling on 2026-11-03. No new glossary terms; no ADR (cheap to chan
 - **v1 ships icons.** The packager's "manifest.json is missing icons" warning goes away.
 - **Two SVG sources in `assets/icons/`** (outside `public/`, so they never reach `dist/`), both on a 1024×1024 canvas:
   - `toolbar.svg`: the bare glyph, solid `#F28C28`.
-  - `app.svg`: the same glyph in white on a `#F28C28` rounded square, 824×824 at offset 100, corner radius 185, no shadow (macOS icon grid).
-- **Motif:** a filled silhouette of a cat's head with two pointed ears. Originally no face at all; revised on 2026-11-04 to add one, cut out of the head (negative space, so the palette stays two colours and the toolbar icon stays single-colour on light and dark toolbars):
-  - `app.svg`: vertical oval eyes, a rounded downward triangle nose and an "ω" mouth.
-  - `toolbar.svg`: simplified for 16px — larger eyes and nose, no mouth (a mouth at 16px is a 1px smear).
+  - `app.svg`: the glyph in white on a `#F28C28` rounded square, 824×824 at offset 100, corner radius 185, no shadow (macOS icon grid).
+- **Motif:** revised on 2026-11-05. It is now a solid side-view silhouette of a whole cat walking left, taking a wide stride: the supporting front leg reaches forward, the other front leg is lifted behind it, the hind legs are scissored, and the tail rises in a hook. There are no eyes or other inner details, since they would not read at 16–32px. This replaces the earlier head-with-face motif (head silhouette with cut-out eyes and nose, squinting eyes since 2026-11-04).
+  - Both SVGs draw the same shapes. The toolbar glyph fills the canvas width, with legs and tail stroked thicker (84/72) so they don't vanish at 16px. In `app.svg` the glyph is scaled to 0.74 and drawn thinner (64/56).
   - Still no whiskers: thin lines vanish at small sizes.
 - **Toolbar icon is in color, not a template image.** A color image renders predictably on light and dark toolbars whatever Safari does with monochrome icons, so template rendering was deliberately not verified (research found no primary source on Safari's tinting; Safari needs PNG, not SVG, for `default_icon`).
 - **Sizes:**
