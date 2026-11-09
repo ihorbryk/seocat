@@ -27,6 +27,8 @@ export interface RowView {
   badges: BadgeView[];
   /** Записи в правій колонці; кожен окремим рядком. */
   values: ValueView[];
+  /** Текст, який кнопка поруч із бейджами кладе в буфер обміну; нема — нема й кнопки. */
+  copy?: string;
 }
 
 export interface SectionView {

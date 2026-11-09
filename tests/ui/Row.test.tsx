@@ -1,5 +1,5 @@
-import { render, screen, within } from '@testing-library/preact';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/preact';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Row } from '../../src/ui/Row';
 import { Table } from '../../src/ui/Table';
 import type { RowView } from '../../src/ui/types';
@@ -85,5 +85,71 @@ describe('Table', () => {
     expect(within(within(tr).getByRole('rowheader')).getByText('2')).toBeTruthy();
     const cell = within(tr).getByRole('cell');
     expect(cell.textContent).toBe('en → https://example.com/ende → Empty');
+  });
+});
+
+describe('Row: копіювання', () => {
+  const row: RowView = {
+    id: 'title',
+    label: 'Title',
+    badges: [{ text: '13 chars · Short', tone: 'warn' }],
+    values: [{ kind: 'text', text: 'Best cat food' }],
+    copy: 'Best cat food',
+  };
+
+  function stubClipboard(writeText: (text: string) => Promise<void>) {
+    const spy = vi.fn(writeText);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText: spy },
+      configurable: true,
+    });
+    return spy;
+  }
+
+  afterEach(() => {
+    vi.useRealTimers();
+    Reflect.deleteProperty(navigator, 'clipboard');
+  });
+
+  it('без copy кнопки немає', () => {
+    const tr = renderRow({ ...row, copy: undefined });
+    expect(within(tr).queryByRole('button')).toBeNull();
+  });
+
+  it('кнопка Copy у лівій колонці кладе copy в буфер обміну і стає Copied', async () => {
+    const writeText = stubClipboard(() => Promise.resolve());
+    const tr = renderRow(row);
+    const button = within(within(tr).getByRole('rowheader')).getByRole('button', { name: 'Copy' });
+    fireEvent.click(button);
+    expect(writeText).toHaveBeenCalledWith('Best cat food');
+    await waitFor(() => expect(button.getAttribute('aria-label')).toBe('Copied'));
+  });
+
+  it('відмова буфера обміну: кнопка стає Copy failed', async () => {
+    stubClipboard(() => Promise.reject(new Error('denied')));
+    const tr = renderRow(row);
+    const button = within(tr).getByRole('button', { name: 'Copy' });
+    fireEvent.click(button);
+    await waitFor(() => expect(button.getAttribute('aria-label')).toBe('Copy failed'));
+  });
+
+  it('буфера обміну немає: кнопка стає Copy failed', async () => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    const tr = renderRow(row);
+    const button = within(tr).getByRole('button', { name: 'Copy' });
+    fireEvent.click(button);
+    await waitFor(() => expect(button.getAttribute('aria-label')).toBe('Copy failed'));
+  });
+
+  it('через 1,5 с кнопка повертається до Copy', async () => {
+    vi.useFakeTimers();
+    stubClipboard(() => Promise.resolve());
+    const tr = renderRow(row);
+    const button = within(tr).getByRole('button', { name: 'Copy' });
+    fireEvent.click(button);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(button.getAttribute('aria-label')).toBe('Copied');
+    await vi.advanceTimersByTimeAsync(1500);
+    expect(button.getAttribute('aria-label')).toBe('Copy');
   });
 });

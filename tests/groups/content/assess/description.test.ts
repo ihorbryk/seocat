@@ -38,3 +38,24 @@ describe('assess: Description', () => {
     ]);
   });
 });
+
+describe('assess: копіювання Description', () => {
+  it('є значення: copy несе показане значення', () => {
+    expect(descRow({ count: 1, value: 'Food for picky cats.' }).copy).toBe('Food for picky cats.');
+  });
+
+  it('Long: copy несе все значення без обрізання', () => {
+    expect(descRow({ count: 1, value: text(200) }).copy).toBe(text(200));
+  });
+
+  it('Duplicate: copy несе значення першого тега', () => {
+    expect(descRow({ count: 2, value: 'First description' }).copy).toBe('First description');
+  });
+
+  it.each([
+    ['Missing', { count: 0, value: null }],
+    ['Empty', { count: 1, value: '' }],
+  ] as const)('%s: copy немає', (_, description) => {
+    expect(descRow(description).copy).toBeUndefined();
+  });
+});

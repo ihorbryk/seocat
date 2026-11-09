@@ -1,4 +1,5 @@
 import { Badge } from './Badge';
+import { CopyButton } from './CopyButton';
 import type { RowView } from './types';
 
 /** Рядок таблиці: ліворуч назва Metric, під нею лічильник і бейджі, праворуч значення(я) моноширинним шрифтом. */
@@ -11,11 +12,12 @@ export function Row({ row }: { row: RowView }) {
         {row.count !== undefined && (
           <span class="mt-0.5 block text-muted tabular-nums">{row.count}</span>
         )}
-        {row.badges.length > 0 && (
-          <span class="mt-0.5 flex flex-wrap gap-1">
+        {(row.badges.length > 0 || row.copy !== undefined) && (
+          <span class="mt-0.5 flex flex-wrap items-center gap-1">
             {row.badges.map((badge) => (
               <Badge key={badge.text} badge={badge} />
             ))}
+            {row.copy !== undefined && <CopyButton text={row.copy} />}
           </span>
         )}
       </th>

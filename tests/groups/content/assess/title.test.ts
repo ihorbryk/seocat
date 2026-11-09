@@ -68,3 +68,24 @@ describe('assess: Title', () => {
     expect(row.values).toEqual([{ kind: 'text', text: text(40) }]);
   });
 });
+
+describe('assess: копіювання Title', () => {
+  it('є значення: copy несе показане значення', () => {
+    expect(titleRow({ count: 1, value: 'Best cat food' }).copy).toBe('Best cat food');
+  });
+
+  it('Long: copy несе все значення без обрізання', () => {
+    expect(titleRow({ count: 1, value: text(200) }).copy).toBe(text(200));
+  });
+
+  it('Duplicate: copy несе значення першого тега', () => {
+    expect(titleRow({ count: 2, value: 'First title' }).copy).toBe('First title');
+  });
+
+  it.each([
+    ['Missing', { count: 0, value: null }],
+    ['Empty', { count: 1, value: '' }],
+  ] as const)('%s: copy немає', (_, title) => {
+    expect(titleRow(title).copy).toBeUndefined();
+  });
+});
