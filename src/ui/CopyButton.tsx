@@ -39,12 +39,12 @@ export function CopyButton({ text }: { text: string }) {
       aria-label={LABELS[state]}
       title={LABELS[state]}
       onClick={copy}
-      class={`inline-flex size-[18px] cursor-pointer items-center justify-center rounded ${TONES[state]}`}
+      class={`-my-px ml-1 inline-flex size-4 cursor-pointer items-center justify-center rounded align-[-3px] ${TONES[state]}`}
     >
       <svg
         viewBox="0 0 16 16"
-        width="13"
-        height="13"
+        width="12"
+        height="12"
         fill="none"
         stroke="currentColor"
         stroke-width="1.5"

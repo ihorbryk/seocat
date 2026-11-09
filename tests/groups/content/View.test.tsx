@@ -18,7 +18,9 @@ describe('View Content', () => {
     render(<View view={assess(snap())} />);
     expect(screen.queryByTestId('url')).toBeNull();
     expect(screen.getByText('Title')).toBeTruthy();
-    expect(screen.getByText('Hello')).toBeTruthy();
+    expect(
+      screen.getByText((_, el) => el?.tagName === 'TD' && el.textContent === 'Hello'),
+    ).toBeTruthy();
   });
 
   it('плитка words з роздільниками тисяч; images і links живуть на своїх вкладках', () => {

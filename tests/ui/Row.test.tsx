@@ -116,10 +116,14 @@ describe('Row: копіювання', () => {
     expect(within(tr).queryByRole('button')).toBeNull();
   });
 
-  it('кнопка Copy у лівій колонці кладе copy в буфер обміну і стає Copied', async () => {
+  it('кнопка Copy стоїть одразу після значення, кладе copy в буфер обміну і стає Copied', async () => {
     const writeText = stubClipboard(() => Promise.resolve());
     const tr = renderRow(row);
-    const button = within(within(tr).getByRole('rowheader')).getByRole('button', { name: 'Copy' });
+    expect(within(within(tr).getByRole('rowheader')).queryByRole('button')).toBeNull();
+    const value = within(within(tr).getByRole('cell')).getByText(
+      (_, el) => el?.tagName === 'DIV' && el.textContent === 'Best cat food',
+    );
+    const button = within(value).getByRole('button', { name: 'Copy' });
     fireEvent.click(button);
     expect(writeText).toHaveBeenCalledWith('Best cat food');
     await waitFor(() => expect(button.getAttribute('aria-label')).toBe('Copied'));

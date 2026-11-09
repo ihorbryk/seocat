@@ -1,6 +1,7 @@
 import { Badge } from './Badge';
 import { CopyButton } from './CopyButton';
-import type { RowView } from './types';
+import { splitLastGrapheme } from '../shared/graphemes';
+import type { RowView, ValueView } from './types';
 
 /** Рядок таблиці: ліворуч назва Metric, під нею лічильник і бейджі, праворуч значення(я) моноширинним шрифтом. */
 export function Row({ row }: { row: RowView }) {
@@ -12,12 +13,11 @@ export function Row({ row }: { row: RowView }) {
         {row.count !== undefined && (
           <span class="mt-0.5 block text-muted tabular-nums">{row.count}</span>
         )}
-        {(row.badges.length > 0 || row.copy !== undefined) && (
-          <span class="mt-0.5 flex flex-wrap items-center gap-1">
+        {row.badges.length > 0 && (
+          <span class="mt-0.5 flex flex-wrap gap-1">
             {row.badges.map((badge) => (
               <Badge key={badge.text} badge={badge} />
             ))}
-            {row.copy !== undefined && <CopyButton text={row.copy} />}
           </span>
         )}
       </th>
@@ -27,17 +27,47 @@ export function Row({ row }: { row: RowView }) {
             key={i}
             class="not-first:mt-[3px] not-first:border-t not-first:border-dotted not-first:border-line not-first:pt-[3px]"
           >
-            {value.kind === 'text' ? (
-              value.text
+            {row.copy !== undefined && i === row.values.length - 1 ? (
+              <ValueWithCopy value={value} copy={row.copy} />
             ) : (
-              <>
-                {value.prefix}
-                <Badge badge={value.badge} />
-              </>
+              <Value value={value} />
             )}
           </div>
         ))}
       </td>
     </tr>
+  );
+}
+
+function Value({ value }: { value: ValueView }) {
+  return value.kind === 'text' ? (
+    <>{value.text}</>
+  ) : (
+    <>
+      {value.prefix}
+      <Badge badge={value.badge} />
+    </>
+  );
+}
+
+/** Значення з кнопкою копіювання: остання графема і кнопка не розриваються, тож кнопка не переноситься сама. */
+function ValueWithCopy({ value, copy }: { value: ValueView; copy: string }) {
+  if (value.kind !== 'text') {
+    return (
+      <>
+        <Value value={value} />
+        <CopyButton text={copy} />
+      </>
+    );
+  }
+  const [head, last] = splitLastGrapheme(value.text);
+  return (
+    <>
+      {head}
+      <span class="whitespace-nowrap">
+        {last}
+        <CopyButton text={copy} />
+      </span>
+    </>
   );
 }
