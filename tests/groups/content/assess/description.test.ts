@@ -29,7 +29,7 @@ describe('assess: Description', () => {
   ] as const)('межа %i -> %s', (n, label, tone) => {
     const row = descRow({ count: 1, value: text(n) });
     expect(row.badges).toEqual([{ text: `${n} chars · ${label}`, tone }]);
-    expect(row.values).toEqual([{ kind: 'text', text: text(n) }]);
+    expect(row.values).toEqual([{ kind: 'text', text: text(n), copy: text(n) }]);
   });
   it('Duplicate: рейтинг першого значення', () => {
     expect(descRow({ count: 2, value: text(100) }).badges).toEqual([
@@ -41,21 +41,25 @@ describe('assess: Description', () => {
 
 describe('assess: копіювання Description', () => {
   it('є значення: copy несе показане значення', () => {
-    expect(descRow({ count: 1, value: 'Food for picky cats.' }).copy).toBe('Food for picky cats.');
+    expect(descRow({ count: 1, value: 'Food for picky cats.' }).values[0]).toMatchObject({
+      copy: 'Food for picky cats.',
+    });
   });
 
   it('Long: copy несе все значення без обрізання', () => {
-    expect(descRow({ count: 1, value: text(200) }).copy).toBe(text(200));
+    expect(descRow({ count: 1, value: text(200) }).values[0]).toMatchObject({ copy: text(200) });
   });
 
   it('Duplicate: copy несе значення першого тега', () => {
-    expect(descRow({ count: 2, value: 'First description' }).copy).toBe('First description');
+    expect(descRow({ count: 2, value: 'First description' }).values[0]).toMatchObject({
+      copy: 'First description',
+    });
   });
 
   it.each([
     ['Missing', { count: 0, value: null }],
     ['Empty', { count: 1, value: '' }],
-  ] as const)('%s: copy немає', (_, description) => {
-    expect(descRow(description).copy).toBeUndefined();
+  ] as const)('%s: записів, а отже й copy, немає', (_, description) => {
+    expect(descRow(description).values).toEqual([]);
   });
 });

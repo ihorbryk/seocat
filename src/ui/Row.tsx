@@ -27,11 +27,7 @@ export function Row({ row }: { row: RowView }) {
             key={i}
             class="not-first:mt-[3px] not-first:border-t not-first:border-dotted not-first:border-line not-first:pt-[3px]"
           >
-            {row.copy !== undefined && i === row.values.length - 1 ? (
-              <ValueWithCopy value={value} copy={row.copy} />
-            ) : (
-              <Value value={value} />
-            )}
+            <Value value={value} />
           </div>
         ))}
       </td>
@@ -39,34 +35,24 @@ export function Row({ row }: { row: RowView }) {
   );
 }
 
+/** Запис правої колонки. Текст із `copy` закінчується кнопкою копіювання: остання графема і кнопка не розриваються, тож кнопка не переноситься сама. */
 function Value({ value }: { value: ValueView }) {
-  return value.kind === 'text' ? (
-    <>{value.text}</>
-  ) : (
-    <>
-      {value.prefix}
-      <Badge badge={value.badge} />
-    </>
-  );
-}
-
-/** Значення з кнопкою копіювання: остання графема і кнопка не розриваються, тож кнопка не переноситься сама. */
-function ValueWithCopy({ value, copy }: { value: ValueView; copy: string }) {
-  if (value.kind !== 'text') {
+  if (value.kind === 'badge') {
     return (
       <>
-        <Value value={value} />
-        <CopyButton text={copy} />
+        {value.prefix}
+        <Badge badge={value.badge} />
       </>
     );
   }
+  if (value.copy === undefined) return <>{value.text}</>;
   const [head, last] = splitLastGrapheme(value.text);
   return (
     <>
       {head}
       <span class="whitespace-nowrap">
         {last}
-        <CopyButton text={copy} />
+        <CopyButton text={value.copy} />
       </span>
     </>
   );

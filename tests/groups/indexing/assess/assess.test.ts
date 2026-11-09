@@ -35,14 +35,20 @@ describe('assess: Canonical', () => {
     const r = row('canonical', { canonical: ['https://example.com/a'] });
     expect(r.count).toBe(1);
     expect(r.badges).toEqual([]);
-    expect(r.values).toEqual([{ kind: 'text', text: 'https://example.com/a' }]);
+    expect(r.values).toEqual([
+      { kind: 'text', text: 'https://example.com/a', copy: 'https://example.com/a' },
+    ]);
   });
   it('кілька: Duplicate ×N і всі записи', () => {
     const r = row('canonical', {
       canonical: ['https://a.com/', 'https://b.com/', 'https://c.com/'],
     });
     expect(r.badges).toEqual([{ text: 'Duplicate ×3', tone: 'warn' }]);
-    expect(r.values).toHaveLength(3);
+    expect(r.values.map((v) => v.kind === 'text' && v.copy)).toEqual([
+      'https://a.com/',
+      'https://b.com/',
+      'https://c.com/',
+    ]);
   });
   it('порожній href: бейдж Empty замість значення', () => {
     const r = row('canonical', { canonical: [''] });
@@ -56,7 +62,7 @@ describe('assess: Robots', () => {
     expect(r.badges).toEqual([MISSING]);
     expect(r.values).toEqual([]);
   });
-  it('записи `name: content`, кількість у лівій колонці', () => {
+  it('записи `name: content`, кількість у лівій колонці, копіюється лише content', () => {
     const r = row('robots', {
       robots: [
         { name: 'robots', content: 'noindex, nofollow' },
@@ -66,8 +72,8 @@ describe('assess: Robots', () => {
     expect(r.count).toBe(2);
     expect(r.badges).toEqual([]);
     expect(r.values).toEqual([
-      { kind: 'text', text: 'robots: noindex, nofollow' },
-      { kind: 'text', text: 'googlebot: noarchive' },
+      { kind: 'text', text: 'robots: noindex, nofollow', copy: 'noindex, nofollow' },
+      { kind: 'text', text: 'googlebot: noarchive', copy: 'noarchive' },
     ]);
   });
   it('порожній content: Empty з іменем перед бейджем', () => {
@@ -80,7 +86,7 @@ describe('assess: hreflang', () => {
   it('Missing', () => {
     expect(row('hreflang', { hreflang: [] }).badges).toEqual([MISSING]);
   });
-  it('пари `код → URL`, x-default і невалідні коди як є', () => {
+  it('пари `код → URL`, x-default і невалідні коди як є; копіюється лише URL', () => {
     const r = row('hreflang', {
       hreflang: [
         { code: 'en', href: 'https://example.com/en' },
@@ -90,9 +96,9 @@ describe('assess: hreflang', () => {
     });
     expect(r.count).toBe(3);
     expect(r.values).toEqual([
-      { kind: 'text', text: 'en → https://example.com/en' },
-      { kind: 'text', text: 'x-default → https://example.com/' },
-      { kind: 'text', text: 'zz_Bogus → https://example.com/zz' },
+      { kind: 'text', text: 'en → https://example.com/en', copy: 'https://example.com/en' },
+      { kind: 'text', text: 'x-default → https://example.com/', copy: 'https://example.com/' },
+      { kind: 'text', text: 'zz_Bogus → https://example.com/zz', copy: 'https://example.com/zz' },
     ]);
   });
   it('порожній href: Empty для запису', () => {

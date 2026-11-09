@@ -10,7 +10,8 @@ export function assessDescription({ description }: ContentSnapshot): RowView {
     id: 'description',
     label: 'Description',
     badges: textTagBadges(description, DESCRIPTION_RANGE),
-    values: description.value ? [{ kind: 'text', text: description.value }] : [],
-    copy: description.value || undefined,
+    values: description.value
+      ? [{ kind: 'text', text: description.value, copy: description.value }]
+      : [],
   };
 }

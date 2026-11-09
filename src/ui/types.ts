@@ -9,7 +9,12 @@ export interface BadgeView {
 
 /** Значення в правій колонці: або текст (моноширинний), або бейдж замість тексту (напр. Empty-запис списку). */
 export type ValueView =
-  | { kind: 'text'; text: string }
+  | {
+      kind: 'text';
+      text: string;
+      /** Текст, який кнопка після значення кладе в буфер обміну (без префікса на кшталт `de → `); нема — нема й кнопки. */
+      copy?: string;
+    }
   | {
       kind: 'badge';
       badge: BadgeView;
@@ -27,8 +32,6 @@ export interface RowView {
   badges: BadgeView[];
   /** Записи в правій колонці; кожен окремим рядком. */
   values: ValueView[];
-  /** Текст, який кнопка після значення кладе в буфер обміну; нема — нема й кнопки. */
-  copy?: string;
 }
 
 export interface SectionView {

@@ -10,7 +10,6 @@ export function assessTitle({ title }: ContentSnapshot): RowView {
     id: 'title',
     label: 'Title',
     badges: textTagBadges(title, TITLE_RANGE),
-    values: title.value ? [{ kind: 'text', text: title.value }] : [],
-    copy: title.value || undefined,
+    values: title.value ? [{ kind: 'text', text: title.value, copy: title.value }] : [],
   };
 }

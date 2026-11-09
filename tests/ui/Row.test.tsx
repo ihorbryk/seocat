@@ -93,8 +93,7 @@ describe('Row: копіювання', () => {
     id: 'title',
     label: 'Title',
     badges: [{ text: '13 chars · Short', tone: 'warn' }],
-    values: [{ kind: 'text', text: 'Best cat food' }],
-    copy: 'Best cat food',
+    values: [{ kind: 'text', text: 'Best cat food', copy: 'Best cat food' }],
   };
 
   function stubClipboard(writeText: (text: string) => Promise<void>) {
@@ -112,8 +111,27 @@ describe('Row: копіювання', () => {
   });
 
   it('без copy кнопки немає', () => {
-    const tr = renderRow({ ...row, copy: undefined });
+    const tr = renderRow({ ...row, values: [{ kind: 'text', text: 'Best cat food' }] });
     expect(within(tr).queryByRole('button')).toBeNull();
+  });
+
+  it('список: кнопка після кожного запису з copy копіює саме його, Empty-запис без кнопки', () => {
+    const writeText = stubClipboard(() => Promise.resolve());
+    const tr = renderRow({
+      id: 'hreflang',
+      label: 'hreflang',
+      count: 3,
+      badges: [],
+      values: [
+        { kind: 'text', text: 'en → https://example.com/en', copy: 'https://example.com/en' },
+        { kind: 'badge', prefix: 'de → ', badge: { text: 'Empty', tone: 'warn' } },
+        { kind: 'text', text: 'fr → https://example.com/fr', copy: 'https://example.com/fr' },
+      ],
+    });
+    const buttons = within(within(tr).getByRole('cell')).getAllByRole('button', { name: 'Copy' });
+    expect(buttons).toHaveLength(2);
+    fireEvent.click(buttons[1]!);
+    expect(writeText).toHaveBeenCalledWith('https://example.com/fr');
   });
 
   it('кнопка Copy стоїть одразу після значення, кладе copy в буфер обміну і стає Copied', async () => {

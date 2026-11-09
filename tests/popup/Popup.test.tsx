@@ -63,7 +63,11 @@ describe('Popup: вкладки', () => {
     expect(screen.getByRole('tab', { selected: true }).textContent).toBe('Indexing');
     const panel = screen.getByRole('tabpanel');
     expect(within(panel).getByText('Canonical')).toBeTruthy();
-    expect(within(panel).getByText('https://example.com/a')).toBeTruthy();
+    expect(
+      within(panel).getByText(
+        (_, el) => el?.tagName === 'DIV' && el.textContent === 'https://example.com/a',
+      ),
+    ).toBeTruthy();
     expect(within(panel).queryByTestId('tile-words')).toBeNull();
     expect(within(panel).queryByText('Title')).toBeNull();
   });

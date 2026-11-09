@@ -1,11 +1,11 @@
 import { duplicate, EMPTY, MISSING } from '../../../shared/badges';
 import type { RowView, ValueView } from '../../../ui/types';
 
-/** Запис списку: `prefix + value`, а для порожнього value (Empty) бейдж Empty з тим самим префіксом. */
+/** Запис списку: `prefix + value` з копіюванням лише value, а для порожнього value (Empty) бейдж Empty з тим самим префіксом. */
 export function listValue(prefix: string, value: string): ValueView {
   return value === ''
     ? { kind: 'badge', badge: EMPTY, ...(prefix ? { prefix } : {}) }
-    : { kind: 'text', text: prefix + value };
+    : { kind: 'text', text: prefix + value, copy: value };
 }
 
 /**

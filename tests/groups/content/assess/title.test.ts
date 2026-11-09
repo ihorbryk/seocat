@@ -38,7 +38,7 @@ describe('assess: Title', () => {
 
   it('Good: значення і зелений бейдж довжини', () => {
     const row = titleRow({ count: 1, value: text(57) });
-    expect(row.values).toEqual([{ kind: 'text', text: text(57) }]);
+    expect(row.values).toEqual([{ kind: 'text', text: text(57), copy: text(57) }]);
     expect(row.badges).toEqual([{ text: '57 chars · Good', tone: 'good' }]);
   });
 
@@ -65,27 +65,31 @@ describe('assess: Title', () => {
       { text: '40 chars · Good', tone: 'good' },
       { text: 'Duplicate ×3', tone: 'warn' },
     ]);
-    expect(row.values).toEqual([{ kind: 'text', text: text(40) }]);
+    expect(row.values).toEqual([{ kind: 'text', text: text(40), copy: text(40) }]);
   });
 });
 
 describe('assess: копіювання Title', () => {
   it('є значення: copy несе показане значення', () => {
-    expect(titleRow({ count: 1, value: 'Best cat food' }).copy).toBe('Best cat food');
+    expect(titleRow({ count: 1, value: 'Best cat food' }).values[0]).toMatchObject({
+      copy: 'Best cat food',
+    });
   });
 
   it('Long: copy несе все значення без обрізання', () => {
-    expect(titleRow({ count: 1, value: text(200) }).copy).toBe(text(200));
+    expect(titleRow({ count: 1, value: text(200) }).values[0]).toMatchObject({ copy: text(200) });
   });
 
   it('Duplicate: copy несе значення першого тега', () => {
-    expect(titleRow({ count: 2, value: 'First title' }).copy).toBe('First title');
+    expect(titleRow({ count: 2, value: 'First title' }).values[0]).toMatchObject({
+      copy: 'First title',
+    });
   });
 
   it.each([
     ['Missing', { count: 0, value: null }],
     ['Empty', { count: 1, value: '' }],
-  ] as const)('%s: copy немає', (_, title) => {
-    expect(titleRow(title).copy).toBeUndefined();
+  ] as const)('%s: записів, а отже й copy, немає', (_, title) => {
+    expect(titleRow(title).values).toEqual([]);
   });
 });
